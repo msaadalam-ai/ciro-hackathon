@@ -699,6 +699,7 @@ class AlertsScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
     );
   }
 }
