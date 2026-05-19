@@ -13,17 +13,59 @@ exports.SignalFusionAgent = onRequest(async (req, res) => {
         // MOCK DATA
         const mockDataPath = path.join(__dirname, "../mock_data");
         const socialData = JSON.parse(fs.readFileSync(path.join(mockDataPath, "social_signals.json"), "utf8"));
-        const weatherData = JSON.parse(fs.readFileSync(path.join(mockDataPath, "weather_signals.json"), "utf8"));
+        
+        let weatherData = [];
+        const openWeatherKey = process.env.OPENWEATHER_API_KEY;
+        if (openWeatherKey) {
+            console.log("[SignalFusionAgent] decision: Fetching real weather data from OpenWeatherMap API.");
+            const cities = ['Islamabad,PK', 'Rawalpindi,PK'];
+            for (const city of cities) {
+                try {
+                    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${openWeatherKey}&units=metric`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        const temp = data.main?.temp || 0;
+                        const rainfall = data.rain?.['1h'] || 0;
+                        let entry = {
+                            id: `live_w_${city.split(',')[0].toLowerCase()}`,
+                            type: "weather",
+                            source: "DATA_SOURCE: LIVE - OpenWeatherMap API",
+                            location: city.split(',')[0],
+                            data: {
+                                temperature_celsius: temp,
+                                rainfall_mm_per_hour: rainfall
+                            },
+                            timestamp: new Date().toISOString()
+                        };
+                        if (rainfall > 10) entry.flood_risk = true;
+                        if (temp > 40) entry.heatwave_risk = true;
+                        weatherData.push(entry);
+                    } else {
+                        console.error(`[SignalFusionAgent] OpenWeatherMap API returned ${res.status} for ${city}`);
+                    }
+                } catch (err) {
+                    console.error(`[SignalFusionAgent] error fetching weather for ${city}:`, err.message);
+                }
+            }
+            if (weatherData.length === 0) {
+                 console.log("[SignalFusionAgent] decision: Failed to fetch live weather, falling back to mock weather data.");
+                 weatherData = JSON.parse(fs.readFileSync(path.join(mockDataPath, "weather_signals.json"), "utf8"));
+            }
+        } else {
+            console.log("[SignalFusionAgent] decision: OPENWEATHER_API_KEY not found. Using mock weather data.");
+            weatherData = JSON.parse(fs.readFileSync(path.join(mockDataPath, "weather_signals.json"), "utf8"));
+        }
+
         const trafficData = JSON.parse(fs.readFileSync(path.join(mockDataPath, "traffic_signals.json"), "utf8"));
         const resourcesData = JSON.parse(fs.readFileSync(path.join(mockDataPath, "resources.json"), "utf8"));
 
-        console.log("[SignalFusionAgent] decision: Successfully loaded mock data from all sources.");
+        console.log("[SignalFusionAgent] decision: Successfully loaded data from all sources.");
 
         const geminiApiKey = process.env.GEMINI_API_KEY;
 
         const prompt = `
 You are the SignalFusionAgent for CIRO (Crisis Intelligence & Response Orchestrator) in Islamabad/Rawalpindi.
-Your task is to analyze the provided mock data signals, fuse them, and output a structured JSON response.
+Your task is to analyze the provided signals, fuse them, and output a structured JSON response.
 
 Here is the data:
 Social Signals: ${JSON.stringify(socialData)}
