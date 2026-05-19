@@ -1,0 +1,14 @@
+{
+  "available_resources": {
+    "ambulances": 3,
+    "rescue_teams": 2,
+    "police_units": 4,
+    "water_tankers": 2,
+    "medical_outreach_teams": 1
+  },
+  "resource_locations": {
+    "PIMS_Hospital": { "lat": 33.7215, "lng": 73.0433 },
+    "Rescue_1122_Islamabad": { "lat": 33.6844, "lng": 73.0479 },
+    "Islamabad_Police_HQ": { "lat": 33.7294, "lng": 73.0931 }
+  }
+}

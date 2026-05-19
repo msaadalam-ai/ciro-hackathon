@@ -1,0 +1,44 @@
+{
+  "signals": [
+    {
+      "id": "s1",
+      "source": "Twitter/X",
+      "text": "G-10 mein pani bhar gaya hai, gaariyan phans gayi hain!",
+      "language": "Urdu",
+      "timestamp": "2026-05-20T14:30:00Z",
+      "location": "G-10, Islamabad",
+      "credibility": 0.7,
+      "urgency": "high"
+    },
+    {
+      "id": "s2",
+      "source": "Facebook",
+      "text": "Flash flooding on Jinnah Avenue near G-10 for past 30 mins",
+      "language": "English",
+      "timestamp": "2026-05-20T14:25:00Z",
+      "location": "G-10, Islamabad",
+      "credibility": 0.65,
+      "urgency": "high"
+    },
+    {
+      "id": "s3",
+      "source": "Field Report",
+      "text": "Water main burst on Street 12, G-10 sector — not flooding",
+      "language": "English",
+      "timestamp": "2026-05-20T14:45:00Z",
+      "location": "G-10 Street 12, Islamabad",
+      "credibility": 0.9,
+      "urgency": "medium"
+    },
+    {
+      "id": "s4",
+      "source": "Twitter/X",
+      "text": "Rawalpindi ke Saddar area mein bohot garmi, log behosh ho rahe hain",
+      "language": "Urdu",
+      "timestamp": "2026-05-20T14:20:00Z",
+      "location": "Saddar, Rawalpindi",
+      "credibility": 0.75,
+      "urgency": "high"
+    }
+  ]
+}

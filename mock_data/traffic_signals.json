@@ -1,0 +1,20 @@
+{
+  "incidents": [
+    {
+      "location": "G-10, Islamabad",
+      "congestion_level": "severe",
+      "congestion_score": 9.2,
+      "normal_score": 2.1,
+      "vehicles_affected": 340,
+      "timestamp": "2026-05-20T14:28:00Z"
+    },
+    {
+      "location": "Saddar, Rawalpindi",
+      "congestion_level": "moderate",
+      "congestion_score": 5.1,
+      "normal_score": 3.0,
+      "vehicles_affected": 85,
+      "timestamp": "2026-05-20T14:25:00Z"
+    }
+  ]
+}

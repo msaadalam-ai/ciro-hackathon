@@ -1,0 +1,18 @@
+{
+  "islamabad": {
+    "timestamp": "2026-05-20T14:30:00Z",
+    "rainfall_mm_per_hour": 45.2,
+    "alert": "Heavy Rainfall Warning",
+    "temperature_celsius": 28,
+    "humidity_percent": 92,
+    "source": "OpenWeatherMap API"
+  },
+  "rawalpindi": {
+    "timestamp": "2026-05-20T14:30:00Z",
+    "rainfall_mm_per_hour": 0,
+    "alert": "Extreme Heat Warning",
+    "temperature_celsius": 47,
+    "humidity_percent": 18,
+    "source": "OpenWeatherMap API"
+  }
+}
