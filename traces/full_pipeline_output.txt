@@ -1,0 +1,496 @@
+[Mock] admin.initializeApp() bypassed
+Starting test run for Agent Chain...
+[SignalFusionAgent] decision: Successfully loaded mock data from all sources.
+[SignalFusionAgent] decision: Calling Gemini API for signal fusion and conflict detection.
+[SignalFusionAgent] decision: Gemini API error - {
+  "error": {
+    "code": 404,
+    "message": "models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.",
+    "status": "NOT_FOUND"
+  }
+}
+
+[SignalFusionAgent] error: Gemini API error: Not Found
+[SignalFusionAgent] decision: Falling back to rule-based analysis.
+[Mock] Blocked write to RTDB path: /traces/SignalFusionAgent/2026-05-19T10:25:42_297Z
+[SignalFusionAgent] decision: Stored fallback trace to Firebase Realtime Database under /traces/SignalFusionAgent/2026-05-19T10:25:42_297Z
+
+====== AGENT 1: SignalFusionAgent OUTPUT ======
+Status Code: 200
+{
+  "agentName": "SignalFusionAgent",
+  "timestamp": "2026-05-19T10:25:42.297Z",
+  "reasoning": "DATA_SOURCE: FALLBACK - Gemini API unavailable. Scored credibility based on rules: Field Report (90%), Twitter (70%), Facebook (65%).",
+  "decision": "Rule-based assessment: Flooding reports in G-10 conflict with a highly credible field report of a water main burst. High heat detected in Saddar.",
+  "confidence": 0.6,
+  "locationsDetected": [
+    "G-10, Islamabad",
+    "Saddar, Rawalpindi"
+  ],
+  "conflicts": [
+    {
+      "location": "G-10, Islamabad",
+      "description": "Conflict between social reports of flooding and field report of water main burst.",
+      "signalsInvolved": [
+        "s1",
+        "s2",
+        "s3"
+      ]
+    }
+  ],
+  "fusedSignals": [
+    {
+      "location": "G-10, Islamabad",
+      "signals": [
+        {
+          "id": "s1",
+          "credibility": 70
+        },
+        {
+          "id": "s2",
+          "credibility": 65
+        },
+        {
+          "id": "s3",
+          "credibility": 90
+        }
+      ],
+      "overallCredibility": 85
+    },
+    {
+      "location": "Saddar, Rawalpindi",
+      "signals": [
+        {
+          "id": "s4",
+          "credibility": 70
+        }
+      ],
+      "overallCredibility": 70
+    }
+  ]
+}
+================================
+
+Running CrisisClassifierAgent using SignalFusionAgent output...
+[CrisisClassifierAgent] decision: Received input from SignalFusionAgent.
+[CrisisClassifierAgent] decision: Calling Gemini API (gemini-2.0-flash) for classification.
+[CrisisClassifierAgent] error: Gemini API error - {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash\nPlease retry in 15.929583884s.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.Help",
+        "links": [
+          {
+            "description": "Learn more about Gemini API quotas",
+            "url": "https://ai.google.dev/gemini-api/docs/rate-limits"
+          }
+        ]
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.QuotaFailure",
+        "violations": [
+          {
+            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+            "quotaId": "GenerateRequestsPerDayPerProjectPerModel-FreeTier",
+            "quotaDimensions": {
+              "model": "gemini-2.0-flash",
+              "location": "global"
+            }
+          },
+          {
+            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+            "quotaId": "GenerateRequestsPerMinutePerProjectPerModel-FreeTier",
+            "quotaDimensions": {
+              "model": "gemini-2.0-flash",
+              "location": "global"
+            }
+          },
+          {
+            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count",
+            "quotaId": "GenerateContentInputTokensPerModelPerMinute-FreeTier",
+            "quotaDimensions": {
+              "location": "global",
+              "model": "gemini-2.0-flash"
+            }
+          }
+        ]
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.RetryInfo",
+        "retryDelay": "15s"
+      }
+    ]
+  }
+}
+
+[CrisisClassifierAgent] error: Gemini API error: Too Many Requests
+[CrisisClassifierAgent] decision: Falling back to rule-based classification.
+[Mock] Blocked write to RTDB path: /traces/CrisisClassifierAgent/2026-05-19T10:25:42_562Z
+[CrisisClassifierAgent] decision: Stored fallback trace to Firebase Realtime Database under /traces/CrisisClassifierAgent/2026-05-19T10:25:42_562Z
+
+====== AGENT 2: CrisisClassifierAgent OUTPUT ======
+Status Code: 200
+{
+  "agentName": "CrisisClassifierAgent",
+  "timestamp": "2026-05-19T10:25:42.562Z",
+  "reasoning": "DATA_SOURCE: FALLBACK - Gemini API unavailable. Applied rule-based classification for G-10 and Saddar.",
+  "confidence": 0.6,
+  "crises": [
+    {
+      "location": "G-10, Islamabad",
+      "classification": [
+        "urban_flooding",
+        "water_main_burst"
+      ],
+      "severityScore": 8,
+      "severityExplanation": "High confidence on water issue, uncertain on type.",
+      "conflictResolution": "Social posts credibility 65-70% say flooding. Field report credibility 90% says water main burst. Conflict acknowledged. Recommend field verification immediately. Did not force a single conclusion.",
+      "prediction": {
+        "durationHours": 12,
+        "affectedRadiusKm": 2.5,
+        "populationAtRisk": 5000,
+        "spreadRisk": "High risk of road damage and further traffic gridlock if untreated."
+      }
+    },
+    {
+      "location": "Saddar, Rawalpindi",
+      "classification": [
+        "heatwave"
+      ],
+      "severityScore": 7,
+      "severityExplanation": "Extreme heat of 47C poses severe risk to vulnerable population.",
+      "conflictResolution": "No conflicting signals. High credibility on extreme heat.",
+      "prediction": {
+        "durationHours": 8,
+        "affectedRadiusKm": 10,
+        "populationAtRisk": 15000,
+        "spreadRisk": "Risk of widespread heatstroke if emergency cooling centers are not activated."
+      }
+    }
+  ]
+}
+================================
+
+Running ResourceAllocatorAgent using CrisisClassifierAgent output...
+[ResourceAllocatorAgent] decision: Received input from CrisisClassifierAgent.
+[ResourceAllocatorAgent] decision: Calling Gemini API for resource allocation.
+[ResourceAllocatorAgent] error: Gemini API error - {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash\nPlease retry in 15.38679978s.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.Help",
+        "links": [
+          {
+            "description": "Learn more about Gemini API quotas",
+            "url": "https://ai.google.dev/gemini-api/docs/rate-limits"
+          }
+        ]
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.QuotaFailure",
+        "violations": [
+          {
+            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count",
+            "quotaId": "GenerateContentInputTokensPerModelPerMinute-FreeTier",
+            "quotaDimensions": {
+              "model": "gemini-2.0-flash",
+              "location": "global"
+            }
+          },
+          {
+            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+            "quotaId": "GenerateRequestsPerMinutePerProjectPerModel-FreeTier",
+            "quotaDimensions": {
+              "model": "gemini-2.0-flash",
+              "location": "global"
+            }
+          },
+          {
+            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+            "quotaId": "GenerateRequestsPerDayPerProjectPerModel-FreeTier",
+            "quotaDimensions": {
+              "model": "gemini-2.0-flash",
+              "location": "global"
+            }
+          }
+        ]
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.RetryInfo",
+        "retryDelay": "15s"
+      }
+    ]
+  }
+}
+
+[ResourceAllocatorAgent] error: Gemini API error: Too Many Requests
+[ResourceAllocatorAgent] decision: Falling back to rule-based allocation.
+[ResourceAllocatorAgent] ALLOCATE: 2 ambulances to Saddar, Rawalpindi REASON: Heatwave poses severe immediate risk to life, needs transport for heatstroke victims.
+[ResourceAllocatorAgent] ALLOCATE: 1 ambulances to G-10, Islamabad REASON: Standby for possible water incident casualties.
+[ResourceAllocatorAgent] ALLOCATE: 3 police_units to G-10, Islamabad REASON: Required immediately to block flooded roads or water main burst area and manage traffic.
+[ResourceAllocatorAgent] ALLOCATE: 1 police_units to Saddar, Rawalpindi REASON: Crowd control around emergency cooling centers.
+[ResourceAllocatorAgent] ALLOCATE: 2 water_tankers to G-10, Islamabad REASON: Sent to provide backup clean water if water main burst is confirmed.
+[ResourceAllocatorAgent] ALLOCATE: 1 rescue_teams to G-10, Islamabad REASON: Field verification required for conflicting signals (flooding vs water main).
+[ResourceAllocatorAgent] ALLOCATE: 1 medical_outreach_teams to Saddar, Rawalpindi REASON: Setup mobile cooling and hydration stations for heatwave.
+[Mock] Blocked write to RTDB path: /traces/ResourceAllocatorAgent/2026-05-19T10:25:43_157Z
+[ResourceAllocatorAgent] decision: Stored fallback trace to Firebase Realtime Database under /traces/ResourceAllocatorAgent/2026-05-19T10:25:43_157Z
+
+====== AGENT 3: ResourceAllocatorAgent OUTPUT ======
+Status Code: 200
+{
+  "agentName": "ResourceAllocatorAgent",
+  "timestamp": "2026-05-19T10:25:43.157Z",
+  "allocations": [
+    {
+      "resourceType": "ambulances",
+      "quantityAllocated": 2,
+      "destination": "Saddar, Rawalpindi",
+      "estimatedTravelTimeMinutes": 25,
+      "allocationReasoning": "Heatwave poses severe immediate risk to life, needs transport for heatstroke victims."
+    },
+    {
+      "resourceType": "ambulances",
+      "quantityAllocated": 1,
+      "destination": "G-10, Islamabad",
+      "estimatedTravelTimeMinutes": 10,
+      "allocationReasoning": "Standby for possible water incident casualties."
+    },
+    {
+      "resourceType": "police_units",
+      "quantityAllocated": 3,
+      "destination": "G-10, Islamabad",
+      "estimatedTravelTimeMinutes": 8,
+      "allocationReasoning": "Required immediately to block flooded roads or water main burst area and manage traffic."
+    },
+    {
+      "resourceType": "police_units",
+      "quantityAllocated": 1,
+      "destination": "Saddar, Rawalpindi",
+      "estimatedTravelTimeMinutes": 20,
+      "allocationReasoning": "Crowd control around emergency cooling centers."
+    },
+    {
+      "resourceType": "water_tankers",
+      "quantityAllocated": 2,
+      "destination": "G-10, Islamabad",
+      "estimatedTravelTimeMinutes": 15,
+      "allocationReasoning": "Sent to provide backup clean water if water main burst is confirmed."
+    },
+    {
+      "resourceType": "rescue_teams",
+      "quantityAllocated": 1,
+      "destination": "G-10, Islamabad",
+      "estimatedTravelTimeMinutes": 12,
+      "allocationReasoning": "Field verification required for conflicting signals (flooding vs water main)."
+    },
+    {
+      "resourceType": "medical_outreach_teams",
+      "quantityAllocated": 1,
+      "destination": "Saddar, Rawalpindi",
+      "estimatedTravelTimeMinutes": 22,
+      "allocationReasoning": "Setup mobile cooling and hydration stations for heatwave."
+    }
+  ],
+  "tradeoffs": [
+    "Saddar (Crisis 2) receives no heavy rescue teams because G-10's water crisis requires immediate technical verification and potential extraction.",
+    "G-10 only gets 1 ambulance because Saddar's extreme heatwave requires more direct medical transport capacity for vulnerable populations."
+  ],
+  "standbyResources": [
+    {
+      "resourceType": "rescue_teams",
+      "quantity": 1,
+      "standbyReason": "Kept on standby pending field verification of G-10 incident type (urban flooding vs simple water main burst)."
+    }
+  ],
+  "beforeState": {
+    "ambulances": 3,
+    "rescue_teams": 2,
+    "police_units": 4,
+    "water_tankers": 2,
+    "medical_outreach_teams": 1
+  },
+  "afterState": {
+    "ambulances": 0,
+    "rescue_teams": 0,
+    "police_units": 0,
+    "water_tankers": 0,
+    "medical_outreach_teams": 0
+  },
+  "totalResponseTimeMinutes": 25
+}
+================================
+
+Running ResponseCoordinatorAgent using ResourceAllocatorAgent output...
+[ResponseCoordinatorAgent] decision: Received input from ResourceAllocatorAgent.
+[ResponseCoordinatorAgent] decision: Calling Gemini API for response generation.
+[ResponseCoordinatorAgent] error: Gemini API error - {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash\nPlease retry in 15.073081713s.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.Help",
+        "links": [
+          {
+            "description": "Learn more about Gemini API quotas",
+            "url": "https://ai.google.dev/gemini-api/docs/rate-limits"
+          }
+        ]
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.QuotaFailure",
+        "violations": [
+          {
+            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count",
+            "quotaId": "GenerateContentInputTokensPerModelPerMinute-FreeTier",
+            "quotaDimensions": {
+              "location": "global",
+              "model": "gemini-2.0-flash"
+            }
+          },
+          {
+            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+            "quotaId": "GenerateRequestsPerMinutePerProjectPerModel-FreeTier",
+            "quotaDimensions": {
+              "location": "global",
+              "model": "gemini-2.0-flash"
+            }
+          },
+          {
+            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+            "quotaId": "GenerateRequestsPerDayPerProjectPerModel-FreeTier",
+            "quotaDimensions": {
+              "location": "global",
+              "model": "gemini-2.0-flash"
+            }
+          }
+        ]
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.RetryInfo",
+        "retryDelay": "15s"
+      }
+    ]
+  }
+}
+
+[ResponseCoordinatorAgent] error: Gemini API error: Too Many Requests
+[ResponseCoordinatorAgent] decision: Falling back to rule-based response generation.
+[Mock] Blocked write to RTDB path: /actions/2026-05-19T10:25:44_303Z
+[Mock] Blocked write to RTDB path: /traces/ResponseCoordinatorAgent/2026-05-19T10:25:44_303Z
+[ResponseCoordinatorAgent] decision: Stored fallback actions to /actions/2026-05-19T10:25:44_303Z and trace to /traces/ResponseCoordinatorAgent/2026-05-19T10:25:44_303Z
+
+====== AGENT 4: ResponseCoordinatorAgent OUTPUT ======
+Status Code: 200
+{
+  "agentName": "ResponseCoordinatorAgent",
+  "timestamp": "2026-05-19T10:25:44.303Z",
+  "publicAlerts": [
+    {
+      "location": "G-10, Islamabad",
+      "language": "Urdu",
+      "message": "G-10 mein paani bhar gaya hai — is area se guzarna avoid karein",
+      "status": "PRELIMINARY - field verification pending"
+    },
+    {
+      "location": "G-10, Islamabad",
+      "language": "English",
+      "message": "PRELIMINARY ALERT: Water emergency in G-10, Islamabad. Avoid the area.",
+      "status": "PRELIMINARY - field verification pending"
+    }
+  ],
+  "trafficRerouting": {
+    "location": "G-10, Islamabad",
+    "alternateRoutes": [
+      "Kashmir Highway via G-9",
+      "Ibn-e-Sina Road via F-10"
+    ],
+    "congestion_before": 9.2,
+    "congestion_expected_after": 4.1
+  },
+  "stakeholderMessages": [
+    {
+      "stakeholder": "PIMS Hospital",
+      "message": "Prepare for potential casualties from G-10 water emergency."
+    },
+    {
+      "stakeholder": "Islamabad Police",
+      "message": "Traffic management instructions: Block flooded roads around G-10."
+    },
+    {
+      "stakeholder": "Rescue 1122",
+      "message": "Standby instructions: Keep heavy rescue teams on standby pending field verification of G-10 incident type."
+    },
+    {
+      "stakeholder": "WASA Water Authority",
+      "message": "Investigate water main on Street 12 G-10 immediately."
+    },
+    {
+      "stakeholder": "Media/Command Center",
+      "message": "Situation summary: Preliminary water emergency in G-10 and confirmed heatwave in Saddar. Response initiated."
+    }
+  ],
+  "heatwaveResponse": {
+    "location": "Saddar, Rawalpindi",
+    "dispatchInstructions": "Setup mobile cooling and hydration stations. Dispatch medical outreach teams.",
+    "publicAlerts": [
+      {
+        "language": "Urdu",
+        "message": "Shadeed garmi ki leher. Bahar nikalne se gurez karein."
+      },
+      {
+        "language": "English",
+        "message": "Extreme heatwave alert. Stay indoors and hydrate."
+      }
+    ],
+    "coolingCenters": [
+      "Saddar Community Hall",
+      "Rawalpindi General Hospital lobby"
+    ]
+  }
+}
+================================
+
+====== FALSE ALARM RETRACTION SCENARIO ======
+[ResponseCoordinatorAgent] decision: RETRACT: flood alert for G-10 - confirmed water main burst
+[Mock] Blocked write to RTDB path: /actions/2026-05-19T10:25:44_304Z
+[Mock] Blocked write to RTDB path: /traces/ResponseCoordinatorAgent/2026-05-19T10:25:44_304Z
+[ResponseCoordinatorAgent] decision: Stored retraction actions to /actions/2026-05-19T10:25:44_304Z and trace to /traces/ResponseCoordinatorAgent/2026-05-19T10:25:44_304Z
+
+====== AGENT RETRACT: retractAlert OUTPUT ======
+Status Code: 200
+{
+  "agentName": "ResponseCoordinatorAgent",
+  "actionType": "RETRACTION",
+  "timestamp": "2026-05-19T10:25:44.304Z",
+  "statusChange": {
+    "location": "G-10, Islamabad",
+    "from": "urban_flooding",
+    "to": "water_main_burst"
+  },
+  "publicAlertsRetracted": true,
+  "stakeholderCorrections": [
+    {
+      "stakeholder": "WASA Water Authority",
+      "message": "Urgent: Confirmed water main burst at Street 12 G-10. Immediate repair required."
+    },
+    {
+      "stakeholder": "Rescue 1122",
+      "message": "Stand down flood rescue. It is a water main burst."
+    },
+    {
+      "stakeholder": "Islamabad Police",
+      "message": "Maintain traffic diversion due to water main burst."
+    }
+  ]
+}
+================================
+
+====== COMPLETE CIRO PIPELINE ======
