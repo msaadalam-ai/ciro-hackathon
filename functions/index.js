@@ -747,3 +747,75 @@ exports.retractAlert = onRequest(async (req, res) => {
     res.status(200).json(retractionResult);
 });
 
+exports.CiroAssistantAgent = onRequest(async (req, res) => {
+    try {
+        const timestamp = new Date().toISOString();
+        const userQuestion = req.body.question || "What is the status?";
+        
+        console.log(`[CiroAssistantAgent] Received question: ${userQuestion}`);
+
+        const geminiApiKey = process.env.GEMINI_API_KEY;
+
+        const prompt = `
+You are CIRO, an AI crisis intelligence assistant for Islamabad/Rawalpindi Pakistan.
+Current active crises: 
+1. G-10 Islamabad - Water emergency (flooding vs water main burst - under investigation) Severity 8/10
+2. Saddar Rawalpindi - Extreme Heatwave 47C Severity 7/10
+Resources deployed: 9 total across both crises.
+You help emergency commanders make decisions. Answer questions about the crisis,
+resource allocation, recommended actions, and response status.
+Keep answers concise and actionable. Respond in the same language the user asks in.
+If asked in Urdu, respond in Urdu.
+
+User Question: "${userQuestion}"
+
+Return EXACTLY a JSON object with this schema (and nothing else, no markdown):
+{
+  "agentName": "CiroAssistantAgent",
+  "timestamp": "${timestamp}",
+  "response": "your detailed but concise response"
+}
+`;
+
+        let aiResult;
+        if (geminiApiKey) {
+            console.log("[CiroAssistantAgent] Calling Gemini API...");
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { response_mime_type: "application/json" }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Gemini API error: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const textResponse = data.candidates[0].content.parts[0].text;
+            aiResult = JSON.parse(textResponse);
+        } else {
+            throw new Error("GEMINI_API_KEY not found.");
+        }
+
+        const traceKey = timestamp.replace(/[.#$[\]]/g, "_");
+        await admin.database().ref(`/traces/CiroAssistantAgent/${traceKey}`).set({
+            question: userQuestion,
+            ...aiResult
+        });
+
+        res.status(200).json(aiResult);
+
+    } catch (error) {
+        console.error("[CiroAssistantAgent] error:", error.message);
+        const fallbackResult = {
+            agentName: "CiroAssistantAgent",
+            timestamp: new Date().toISOString(),
+            response: "I am operating in offline mock mode right now. The G-10 crisis is a water main burst with severity 8, and Saddar has a 47C heatwave. 9 resources are deployed."
+        };
+        res.status(200).json(fallbackResult);
+    }
+});
+
