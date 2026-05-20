@@ -1,744 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>CIRO — Crisis Intelligence &amp; Response Orchestrator</title>
-<meta name="description" content="CIRO — Pakistani AI-powered emergency response command center. Crisis Intelligence &amp; Response Orchestrator." />
-<meta property="og:title" content="CIRO — Crisis Intelligence &amp; Response Orchestrator" />
-<meta property="og:description" content="Pakistani AI-powered emergency response command center." />
-<meta property="og:type" content="website" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --bg: #0A0A0A;
-  --bg-card: #141414;
-  --bg-panel: #1A1A1A;
-  --orange: #FF6B00;
-  --orange-glow: rgba(255,107,0,0.15);
-  --orange-dim: rgba(255,107,0,0.08);
-  --red: #FF2D2D;
-  --green: #00C853;
-  --blue: #1E90FF;
-  --amber: #FFC107;
-  --text: #F5F5F5;
-  --text-muted: #888888;
-  --border: rgba(255,107,0,0.25);
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* ===== PARTICLES ===== */
-#particles { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
-.particle {
-  position: absolute;
-  background: var(--orange);
-  border-radius: 50%;
-  opacity: 0.05;
-  animation: float linear infinite;
-}
-
-/* ===== KEYFRAMES ===== */
-@keyframes float {
-  0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
-  10%  { opacity: 0.05; }
-  90%  { opacity: 0.05; }
-  100% { transform: translateY(-10vh) translateX(20px); opacity: 0; }
-}
-
-@keyframes radar {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-@keyframes pulse {
-  0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(255,107,0,0.4); }
-  50%     { opacity:0.8; box-shadow:0 0 0 8px rgba(255,107,0,0); }
-}
-
-@keyframes pulseGreen {
-  0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(0,200,83,0.4); }
-  50%     { opacity:0.8; box-shadow:0 0 0 8px rgba(0,200,83,0); }
-}
-
-@keyframes shimmer {
-  0%,100% { text-shadow: 0 0 10px rgba(255,107,0,0.5); }
-  50%     { text-shadow: 0 0 30px rgba(255,107,0,1), 0 0 60px rgba(255,107,0,0.5); }
-}
-
-@keyframes bounce {
-  0%,100% { transform: translateY(0); }
-  50%     { transform: translateY(-6px); }
-}
-
-@keyframes fadeInUp {
-  from { opacity:0; transform:translateY(18px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-
-@keyframes fadeIn {
-  from { opacity:0; }
-  to   { opacity:1; }
-}
-
-@keyframes fillBar {
-  from { width:0; }
-}
-
-@keyframes ripple {
-  to { transform:scale(4); opacity:0; }
-}
-
-@keyframes blink {
-  0%,100% { opacity:1; }
-  50%     { opacity:0; }
-}
-
-/* ===== LAYOUT ===== */
-.container { position: relative; z-index: 1; }
-
-/* ===== HEADER ===== */
-header {
-  width: 100%;
-  background: var(--bg);
-  border-bottom: 2px solid var(--orange);
-  padding: 12px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  gap: 16px;
-}
-
-.header-left { display:flex; align-items:center; gap:12px; flex-shrink:0; }
-
-.logo-wrap { position:relative; width:48px; height:48px; flex-shrink:0; }
-
-.logo-bg {
-  position: absolute; inset:0;
-  background: var(--orange-dim);
-  border-radius: 50%;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-.logo-svg { position:relative; z-index:1; }
-
-.radar-sweep {
-  transform-origin: 24px 24px;
-  animation: radar 3s linear infinite;
-  transform-box: fill-box;
-}
-
-.brand-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900;
-  font-size: 32px;
-  color: var(--text);
-  line-height: 1;
-  letter-spacing: 0.02em;
-}
-
-.brand-sub {
-  font-size: 9px;
-  font-weight: 500;
-  color: var(--orange);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  margin-top: 3px;
-}
-
-.header-center {
-  flex: 1;
-  text-align: center;
-  animation: fadeIn 1.2s ease forwards;
-}
-
-.header-tagline {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-}
-
-.header-tagline .word { color: var(--text); }
-.header-tagline .dot  { color: var(--orange); margin:0 5px; }
-
-.header-right { display:flex; align-items:center; gap:14px; flex-shrink:0; }
-
-.status-online {
-  display: flex; align-items:center; gap:6px;
-  background: rgba(0,200,83,0.1);
-  border: 1px solid rgba(0,200,83,0.3);
-  border-radius: 20px;
-  padding: 4px 10px;
-  font-size: 10px; font-weight:700; color: var(--green); letter-spacing:0.08em;
-}
-
-.status-dot-green {
-  width:8px; height:8px;
-  background: var(--green); border-radius:50%;
-  animation: pulseGreen 2s ease-in-out infinite;
-}
-
-.header-clock { text-align:right; }
-
-.clock-val {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 16px;
-  color: var(--orange);
-  font-weight: 500;
-  display: block;
-  line-height: 1.2;
-}
-
-.clock-label { font-size:11px; color:var(--text-muted); }
-
-/* ===== MAIN ===== */
-main { padding: 20px 24px; }
-
-/* ===== SECTION HEADER ===== */
-.sec-hdr {
-  display:flex; align-items:center; gap:10px;
-  margin-bottom: 14px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 16px; font-weight:700; letter-spacing:0.08em;
-  color: var(--text); text-transform:uppercase;
-}
-
-.pulse-dot {
-  width:8px; height:8px;
-  background: var(--orange); border-radius:50%;
-  animation: pulse 1.5s ease-in-out infinite;
-  flex-shrink:0;
-}
-
-/* ===== BADGES ===== */
-.badge {
-  display:inline-flex; align-items:center; gap:3px;
-  border-radius:4px; padding:2px 7px;
-  font-size:10px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase;
-}
-.b-red    { background:rgba(255,45,45,0.15);  border:1px solid rgba(255,45,45,0.3);  color:var(--red); }
-.b-orange { background:rgba(255,107,0,0.15); border:1px solid rgba(255,107,0,0.3); color:var(--orange); }
-.b-green  { background:rgba(0,200,83,0.15);  border:1px solid rgba(0,200,83,0.3);  color:var(--green); }
-.b-amber  { background:rgba(255,193,7,0.15); border:1px solid rgba(255,193,7,0.3); color:var(--amber); }
-.b-blue   { background:rgba(30,144,255,0.15);border:1px solid rgba(30,144,255,0.3);color:var(--blue); }
-.b-grey   { background:rgba(136,136,136,0.15);border:1px solid rgba(136,136,136,0.3);color:var(--text-muted); }
-
-/* ===== HERO METRICS ===== */
-.hero-metrics {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 22px;
-}
-
-.metric-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--orange);
-  border-radius: 6px;
-  padding: 18px 16px;
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  cursor: default;
-  transition: box-shadow 0.3s, transform 0.3s;
-  animation: fadeInUp 0.5s ease forwards;
-  opacity: 0;
-}
-
-.metric-card:hover {
-  box-shadow: 0 0 0 1px var(--orange), 0 0 24px var(--orange-glow);
-  transform: translateY(-3px);
-}
-
-.metric-icon-wrap {
-  position:relative; width:44px; height:44px; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-}
-
-.metric-icon-bg { position:absolute; inset:0; background:var(--orange-glow); border-radius:50%; }
-.metric-icon    { position:relative; z-index:1; font-size:20px; }
-
-.metric-label {
-  font-size: 10px; font-weight:600; color:var(--text-muted);
-  letter-spacing:0.15em; text-transform:uppercase; margin-bottom:5px;
-}
-
-.metric-value {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 48px; font-weight:900; line-height:1;
-}
-
-.c-red    { color:var(--red); }
-.c-orange { color:var(--orange); }
-.c-green  { color:var(--green); }
-
-/* ===== SIGNAL FEED ===== */
-.signal-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 22px;
-}
-
-.signal-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--orange);
-  border-radius: 6px;
-  padding: 14px;
-  animation: fadeInUp 0.5s ease forwards;
-  opacity: 0;
-}
-
-.signal-card.bl-green { border-left-color: var(--green); }
-.signal-card.bl-blue  { border-left-color: var(--blue);  }
-
-.sig-src {
-  font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
-  color:var(--orange); margin-bottom:8px;
-  display:flex; align-items:center; justify-content:space-between;
-}
-
-.signal-card.bl-green .sig-src { color:var(--green); }
-.signal-card.bl-blue  .sig-src { color:var(--blue);  }
-
-.sig-text {
-  font-size:12px; color:var(--text); line-height:1.55;
-  margin-bottom:10px; font-style:italic;
-}
-
-.cred-label {
-  font-size:10px; color:var(--text-muted);
-  margin-bottom:4px; display:flex; justify-content:space-between;
-}
-
-.cred-bar { height:4px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; margin-bottom:9px; }
-
-.cred-fill {
-  height:100%; border-radius:2px;
-  background: var(--orange);
-  animation: fillBar 1.5s ease forwards;
-}
-.cred-fill.cf-green { background:var(--green); }
-.cred-fill.cf-blue  { background:var(--blue);  }
-
-.sig-meta { display:flex; align-items:center; justify-content:space-between; font-size:10px; color:var(--text-muted); }
-
-/* ===== 3-COL GRID ===== */
-.three-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 22px;
-}
-
-.panel {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 18px;
-}
-
-.panel-hdr {
-  display:flex; align-items:center; gap:8px;
-  margin-bottom: 16px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size:15px; font-weight:700; letter-spacing:0.08em;
-  text-transform:uppercase; color:var(--text);
-  padding-bottom:12px; border-bottom:1px solid var(--border);
-  flex-wrap: wrap;
-}
-
-/* ===== CRISIS CARDS ===== */
-.crisis-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 14px;
-  margin-bottom: 14px;
-}
-
-.crisis-top {
-  display:flex; align-items:flex-start; justify-content:space-between;
-  margin-bottom:6px;
-}
-
-.crisis-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight:700; font-size:22px; color:var(--text); line-height:1;
-}
-
-.crisis-sub { font-size:12px; font-weight:600; color:var(--red); margin:3px 0 10px; letter-spacing:0.04em; }
-.crisis-sub.orange { color:var(--orange); }
-
-.sev-label { font-size:10px; color:var(--text-muted); margin-bottom:3px; display:flex; justify-content:space-between; }
-
-.sev-bar { height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; margin-bottom:10px; }
-
-.sev-fill {
-  height:100%; border-radius:3px;
-  background: linear-gradient(90deg, var(--orange), #FF8C00);
-  animation: fillBar 1.5s ease forwards;
-}
-
-.tags { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:9px; }
-
-.tag {
-  font-size:10px; border:1px solid var(--orange);
-  color:var(--orange); padding:2px 7px; border-radius:3px;
-  font-family:'JetBrains Mono',monospace;
-}
-
-.crisis-risk { font-size:12px; color:var(--text-muted); margin-bottom:9px; }
-
-.conf-row { display:flex; align-items:center; gap:10px; }
-
-.conf-arc { width:36px; height:36px; flex-shrink:0; }
-
-.conf-val  { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; color:var(--orange); }
-.conf-text { font-size:10px; color:var(--text-muted); }
-
-.heat-temp {
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:72px; font-weight:900; color:var(--orange);
-  line-height:1; animation:shimmer 2s ease-in-out infinite; margin:4px 0;
-}
-
-/* ===== PIPELINE BUTTON ===== */
-.pipeline-btn {
-  width:100%; height:70px;
-  background: linear-gradient(135deg,#FF6B00,#FF8C00);
-  border:none; border-radius:6px;
-  color:#000; font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:18px; letter-spacing:0.06em;
-  cursor:pointer; position:relative; overflow:hidden;
-  transition:box-shadow 0.3s;
-  margin-bottom:14px;
-}
-
-.pipeline-btn:hover { box-shadow:0 0 28px rgba(255,107,0,0.5); }
-
-.ripple-circle {
-  position:absolute; border-radius:50%;
-  background:rgba(0,0,0,0.25);
-  transform:scale(0);
-  animation:ripple 0.6s linear;
-  pointer-events:none;
-}
-
-/* ===== AGENTS ===== */
-.agent-list { display:flex; flex-direction:column; }
-
-.agent-connector {
-  width:2px; height:14px; background:rgba(255,107,0,0.12);
-  margin-left:15px; transition:background 0.4s;
-}
-
-.agent-connector.active { background:var(--orange); }
-
-.agent-row {
-  display:flex; align-items:center; gap:10px;
-  padding:7px 10px; border-radius:5px;
-  transition:background 0.4s, box-shadow 0.4s;
-}
-
-.agent-row.active {
-  background:var(--orange-dim);
-  box-shadow:0 0 12px var(--orange-glow);
-}
-
-.agent-ind {
-  width:12px; height:12px; border-radius:50%;
-  background:rgba(136,136,136,0.25);
-  border:2px solid rgba(136,136,136,0.35); flex-shrink:0;
-  transition:background 0.4s, border-color 0.4s, box-shadow 0.4s;
-}
-
-.agent-ind.processing {
-  background:var(--orange); border-color:var(--orange);
-  box-shadow:0 0 8px var(--orange);
-  animation:pulse 1s ease-in-out infinite;
-}
-
-.agent-ind.done {
-  background:var(--green); border-color:var(--green);
-  box-shadow:0 0 8px var(--green);
-}
-
-.agent-name {
-  font-family:'JetBrains Mono',monospace; font-size:11px;
-  color:var(--text-muted); flex:1; transition:color 0.4s;
-}
-
-.agent-row.active .agent-name { color:var(--orange); }
-.agent-row.done-row .agent-name { color:var(--green); }
-
-.agent-status {
-  font-size:10px; font-weight:700; letter-spacing:0.07em;
-  color:var(--text-muted); transition:color 0.4s;
-}
-
-.agent-row.active   .agent-status { color:var(--orange); }
-.agent-row.done-row .agent-status { color:var(--green); }
-
-/* ===== TERMINAL ===== */
-.terminal {
-  background:#000; border:1px solid rgba(255,107,0,0.18);
-  border-radius:5px; padding:11px;
-  margin-top:12px; height:156px; overflow-y:auto;
-  font-family:'JetBrains Mono',monospace; font-size:11px; line-height:1.7;
-}
-
-.t-line       { color:var(--orange); display:block; }
-.t-line.green { color:var(--green); }
-.t-line.muted { color:var(--text-muted); }
-
-.t-cursor {
-  display:inline-block; width:8px; height:12px;
-  background:var(--orange); animation:blink 1s step-end infinite;
-  vertical-align:middle; margin-left:2px;
-}
-
-/* ===== RESOURCE TABLE ===== */
-.res-table { width:100%; border-collapse:collapse; font-size:12px; }
-
-.res-table th {
-  font-size:10px; font-weight:600; color:var(--text-muted);
-  letter-spacing:0.1em; text-transform:uppercase;
-  padding:0 7px 10px; text-align:left; border-bottom:1px solid var(--border);
-}
-
-.res-table td {
-  padding:8px 7px; border-bottom:1px solid rgba(255,107,0,0.07);
-  color:var(--text); vertical-align:middle;
-}
-
-.res-table tr:last-child td { border-bottom:none; }
-
-.spill {
-  padding:2px 7px; border-radius:3px;
-  font-size:10px; font-weight:700; letter-spacing:0.05em;
-}
-
-.sp-enroute  { background:rgba(255,107,0,0.15); color:var(--orange); border:1px solid rgba(255,107,0,0.3); }
-.sp-deployed { background:rgba(0,200,83,0.15);  color:var(--green);  border:1px solid rgba(0,200,83,0.3);  }
-.sp-deploying{ background:rgba(255,193,7,0.15); color:var(--amber);  border:1px solid rgba(255,193,7,0.3); }
-.sp-standby  { background:rgba(136,136,136,0.15);color:var(--text-muted);border:1px solid rgba(136,136,136,0.3); }
-
-.constraint-box {
-  margin-top:14px; border:1px solid rgba(255,107,0,0.4);
-  background:rgba(255,107,0,0.05); border-radius:5px; padding:11px;
-}
-
-.constraint-hdr { font-size:11px; font-weight:700; color:var(--orange); letter-spacing:0.07em; margin-bottom:5px; }
-
-.constraint-box p { font-size:11px; color:var(--text-muted); line-height:1.6; }
-
-/* ===== BOTTOM PANELS ===== */
-.bottom-panels {
-  display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px;
-}
-
-/* ===== ALERT CARDS ===== */
-.alert-card {
-  border-radius:6px; padding:13px; margin-bottom:11px;
-  border:1px solid var(--border); background:var(--bg-card);
-  animation:fadeInUp 0.5s ease forwards; opacity:0;
-}
-
-.alert-card.ac-red    { border-color:rgba(255,45,45,0.4);  background:rgba(255,45,45,0.04); }
-.alert-card.ac-orange { border-color:rgba(255,107,0,0.4); background:rgba(255,107,0,0.04); }
-
-.ac-hdr {
-  font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700;
-  margin-bottom:6px; display:flex; align-items:center;
-  justify-content:space-between; gap:6px;
-}
-
-.ac-hdr.red    { color:var(--red); }
-.ac-hdr.orange { color:var(--orange); }
-
-.strikethrough { text-decoration:line-through; color:var(--red); font-size:12px; line-height:1.5; }
-.alert-update  { color:var(--green); font-size:12px; margin:3px 0; }
-.alert-meta    { font-size:11px; color:var(--text-muted); margin-top:5px; }
-.alert-txt     { font-size:12px; color:var(--text-muted); line-height:1.6; margin:3px 0; }
-
-.lang-row { display:flex; gap:6px; margin-top:6px; }
-
-/* ===== STAKEHOLDER ===== */
-.sk-row {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:9px 0; border-bottom:1px solid rgba(255,107,0,0.07);
-  animation:fadeInUp 0.5s ease forwards; opacity:0;
-}
-
-.sk-row:last-child { border-bottom:none; }
-
-.sk-left { display:flex; align-items:center; gap:8px; }
-
-.sk-icon { font-size:16px; }
-
-.sk-name { font-size:12px; font-weight:600; color:var(--text); }
-.sk-msg  { font-size:11px; color:var(--text-muted); }
-
-.sk-sent { font-size:11px; font-weight:600; color:var(--green); white-space:nowrap; }
-
-/* ===== CHAT ===== */
-.chat-wrap {
-  height:360px; background:var(--bg);
-  border:1px solid var(--border); border-radius:6px;
-  display:flex; flex-direction:column; overflow:hidden; margin-bottom:0;
-}
-
-.chat-msgs { flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:11px; }
-
-.chat-msg { display:flex; gap:9px; align-items:flex-start; }
-.chat-msg.user-msg { flex-direction:row-reverse; }
-
-.chat-av {
-  width:30px; height:30px;
-  background:var(--orange-glow); border:1px solid var(--orange);
-  border-radius:50%; display:flex; align-items:center; justify-content:center;
-  font-size:13px; flex-shrink:0; box-shadow:0 0 10px var(--orange-glow);
-}
-
-.user-av {
-  width:30px; height:30px;
-  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18);
-  border-radius:50%; display:flex; align-items:center; justify-content:center;
-  font-size:13px; flex-shrink:0;
-}
-
-.chat-bub {
-  background:var(--bg-card); border:1px solid var(--border);
-  border-radius:6px; padding:9px 12px;
-  font-size:12px; color:var(--text); line-height:1.6;
-  max-width:calc(100% - 42px);
-}
-
-.chat-bub.user { background:rgba(255,107,0,0.1); border-color:rgba(255,107,0,0.3); }
-
-.typing-dots { display:flex; gap:4px; align-items:center; padding:2px 0; }
-.t-dot { width:8px; height:8px; background:var(--orange); border-radius:50%; }
-.t-dot:nth-child(1) { animation:bounce 0.8s ease-in-out infinite; }
-.t-dot:nth-child(2) { animation:bounce 0.8s ease-in-out 0.2s infinite; }
-.t-dot:nth-child(3) { animation:bounce 0.8s ease-in-out 0.4s infinite; }
-
-.chips {
-  padding:7px 11px; display:flex; flex-wrap:wrap; gap:6px;
-  border-top:1px solid var(--border); background:var(--bg-panel);
-}
-
-.chip {
-  background:rgba(255,107,0,0.07); border:1px solid rgba(255,107,0,0.22);
-  border-radius:20px; padding:4px 10px; font-size:11px; color:var(--orange);
-  cursor:pointer; transition:background 0.2s, box-shadow 0.2s; white-space:nowrap;
-}
-
-.chip:hover { background:rgba(255,107,0,0.16); box-shadow:0 0 8px var(--orange-glow); }
-
-.chat-input-row {
-  display:flex; gap:8px; padding:9px 11px;
-  border-top:1px solid var(--border); background:var(--bg-panel);
-}
-
-.chat-input {
-  flex:1; background:var(--bg); border:1px solid var(--border);
-  border-radius:4px; padding:7px 11px;
-  color:var(--text); font-family:'Inter',sans-serif; font-size:12px;
-  outline:none; transition:border-color 0.2s;
-}
-
-.chat-input::placeholder { color:var(--text-muted); }
-.chat-input:focus { border-color:var(--orange); }
-
-.chat-send {
-  width:36px; height:36px; background:var(--orange); border:none;
-  border-radius:4px; color:#000; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  font-size:15px; transition:background 0.2s, box-shadow 0.2s; flex-shrink:0;
-}
-
-.chat-send:hover { background:#FF8C00; box-shadow:0 0 12px var(--orange-glow); }
-
-/* ===== FOOTER ===== */
-footer {
-  border-top: 1px solid var(--orange);
-  padding: 13px 24px;
-  display:flex; align-items:center; justify-content:space-between;
-  font-size:12px; color:var(--text-muted);
-  position:relative; z-index:1;
-  background: var(--bg);
-}
-
-footer a { color:var(--orange); text-decoration:none; transition:opacity 0.2s; }
-footer a:hover { opacity:0.8; }
-
-/* ===== SCROLLBAR ===== */
-::-webkit-scrollbar { width:4px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:rgba(255,107,0,0.3); border-radius:2px; }
-
-/* ===== RESPONSIVE ===== */
-@media(max-width:1200px){
-  .hero-metrics    { grid-template-columns:repeat(2,1fr); }
-  .signal-grid     { grid-template-columns:repeat(2,1fr); }
-  .three-col       { grid-template-columns:1fr 1fr; }
-  .three-col .panel:nth-child(3) { grid-column:1/-1; }
-  .bottom-panels   { grid-template-columns:1fr 1fr; }
-  .bottom-panels .panel:nth-child(3) { grid-column:1/-1; }
-}
-
-@media(max-width:768px){
-  header { flex-wrap:wrap; }
-  .header-center { order:3; width:100%; text-align:center; }
-  .hero-metrics  { grid-template-columns:repeat(2,1fr); }
-  .signal-grid   { grid-template-columns:1fr; }
-  .three-col     { grid-template-columns:1fr; }
-  .bottom-panels { grid-template-columns:1fr; }
-  .metric-value  { font-size:38px; }
+:root{
+  --bg:#0A0A0A;--bg-card:#141414;--bg-panel:#1A1A1A;
+  --orange:#FF6B00;--og:rgba(255,107,0,0.15);--od:rgba(255,107,0,0.08);
+  --red:#FF2D2D;--green:#00C853;--blue:#1E90FF;--amber:#FFC107;
+  --text:#F5F5F5;--muted:#888;--border:rgba(255,107,0,0.25);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* ── KEYFRAMES ── */
+@keyframes radar{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(255,107,0,.4)}50%{opacity:.8;box-shadow:0 0 0 8px rgba(255,107,0,0)}}
+@keyframes pulseG{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,200,83,.4)}50%{opacity:.8;box-shadow:0 0 0 8px rgba(0,200,83,0)}}
+@keyframes shimmer{0%,100%{text-shadow:0 0 10px rgba(255,107,0,.5)}50%{text-shadow:0 0 30px rgba(255,107,0,1),0 0 60px rgba(255,107,0,.5)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fillBar{from{width:0}}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes float{0%{transform:translateY(100vh);opacity:0}10%{opacity:.05}90%{opacity:.05}100%{transform:translateY(-10vh);opacity:0}}
+@keyframes pageFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PARTICLES ── */
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
+.pt{position:absolute;background:var(--orange);border-radius:50%;opacity:.05;animation:float linear infinite;}
+
+/* ── HEADER ── */
+header{width:100%;background:var(--bg);border-bottom:2px solid var(--orange);padding:10px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;gap:12px;}
+.hl{display:flex;align-items:center;gap:11px;flex-shrink:0;}
+.logo-wrap{position:relative;width:46px;height:46px;flex-shrink:0;}
+.logo-bg{position:absolute;inset:0;background:var(--od);border-radius:50%;animation:pulse 2s ease-in-out infinite;}
+.logo-svg{position:relative;z-index:1;}
+.radar-sweep{transform-origin:23px 23px;animation:radar 3s linear infinite;transform-box:fill-box;}
+.brand-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:30px;color:var(--text);line-height:1;letter-spacing:.02em;}
+.brand-sub{font-size:9px;font-weight:500;color:var(--orange);letter-spacing:.2em;text-transform:uppercase;margin-top:2px;}
+.hc{flex:1;text-align:center;}
+.tagline{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.14em;}
+.tagline .w{color:var(--text);}.tagline .d{color:var(--orange);margin:0 5px;}
+.hr{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.sol{display:flex;align-items:center;gap:5px;background:rgba(0,200,83,.1);border:1px solid rgba(0,200,83,.3);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;color:var(--green);letter-spacing:.07em;}
+.sdg{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulseG 2s ease-in-out infinite;}
+.hclock{text-align:right;}
+.cv{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--orange);font-weight:500;display:block;line-height:1.2;}
+.cl{font-size:10px;color:var(--muted);}
+
+/* ── NAV ── */
+nav{background:var(--bg-panel);border-bottom:1px solid var(--border);padding:0 22px;display:flex;align-items:center;gap:0;position:sticky;top:70px;z-index:190;overflow-x:auto;}
+nav::-webkit-scrollbar{height:3px;}nav::-webkit-scrollbar-thumb{background:var(--orange);}
+.nav-tab{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:13px 18px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--orange);border-bottom-color:var(--orange);}
+
+/* ── PAGES ── */
+.page{display:none;padding:20px 22px;animation:pageFade .35s ease forwards;}
+.page.active{display:block;}
+
+/* ── UTILITIES ── */
+.badge{display:inline-flex;align-items:center;gap:3px;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;}
+.b-r{background:rgba(255,45,45,.15);border:1px solid rgba(255,45,45,.3);color:var(--red);}
+.b-o{background:rgba(255,107,0,.15);border:1px solid rgba(255,107,0,.3);color:var(--orange);}
+.b-g{background:rgba(0,200,83,.15);border:1px solid rgba(0,200,83,.3);color:var(--green);}
+.b-a{background:rgba(255,193,7,.15);border:1px solid rgba(255,193,7,.3);color:var(--amber);}
+.b-b{background:rgba(30,144,255,.15);border:1px solid rgba(30,144,255,.3);color:var(--blue);}
+.b-m{background:rgba(136,136,136,.15);border:1px solid rgba(136,136,136,.3);color:var(--muted);}
+
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:7px;padding:16px;}
+.panel{background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:18px;}
+
+.sec{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text);display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.sec .pd{width:7px;height:7px;background:var(--orange);border-radius:50%;animation:pulse 1.5s ease-in-out infinite;}
+
+.ph{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+
+.cred-bar{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin:4px 0 8px;}
+.cred-fill{height:100%;border-radius:3px;background:var(--orange);animation:fillBar 1.5s ease forwards;}
+.cf-g{background:var(--green);}.cf-b{background:var(--blue);}
+
+.sev-bar{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin:3px 0 10px;}
+.sev-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--orange),#FF8C00);animation:fillBar 1.5s ease forwards;}
+
+.tag{font-size:10px;border:1px solid var(--orange);color:var(--orange);padding:2px 7px;border-radius:3px;font-family:'JetBrains Mono',monospace;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0;}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:rgba(255,107,0,.3);border-radius:2px;}
+
+/* ── PAGE 1: COMMAND CENTER ── */
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.mc{background:var(--bg-card);border:1px solid var(--border);border-left:4px solid var(--orange);border-radius:7px;padding:16px;display:flex;align-items:flex-start;gap:12px;cursor:default;transition:box-shadow .3s,transform .3s;}
+.mc:hover{box-shadow:0 0 0 1px var(--orange),0 0 22px var(--og);transform:translateY(-3px);}
+.mic{position:relative;width:42px;height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.mib{position:absolute;inset:0;background:var(--og);border-radius:50%;}
+.mi{position:relative;z-index:1;font-size:19px;}
+.ml{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px;}
+.mv{font-family:'Barlow Condensed',sans-serif;font-size:46px;font-weight:900;line-height:1;}
+.c-r{color:var(--red);}.c-o{color:var(--orange);}.c-g{color:var(--green);}
+
+.crisis-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.crisis-card{background:var(--bg-card);border:1px solid var(--border);border-radius:7px;padding:14px;}
+.ctop{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px;}
+.ctitle{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--text);line-height:1;}
+.csub{font-size:11px;font-weight:600;color:var(--red);margin:3px 0 8px;letter-spacing:.04em;}
+.csub.o{color:var(--orange);}
+.heat{font-family:'Barlow Condensed',sans-serif;font-size:58px;font-weight:900;color:var(--orange);line-height:1;animation:shimmer 2s ease-in-out infinite;margin:2px 0 6px;}
+.sl{font-size:10px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:3px;}
+.crisk{font-size:11px;color:var(--muted);margin-bottom:7px;}
+.conf-row{display:flex;align-items:center;gap:9px;}
+.carc{width:34px;height:34px;flex-shrink:0;}
+.cv2{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:var(--orange);}
+.ct{font-size:10px;color:var(--muted);}
+
+.agent-strip{background:var(--bg-panel);border:1px solid var(--border);border-radius:7px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:0;overflow-x:auto;}
+.ast{display:flex;align-items:center;gap:8px;padding:0 12px;white-space:nowrap;}
+.ast:first-child{padding-left:0;}
+.ast-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);}
+.ast-name{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+.ast-sep{color:rgba(255,107,0,.3);font-size:18px;}
+
+.run-btn{width:100%;height:60px;background:linear-gradient(135deg,#FF6B00,#FF8C00);border:none;border-radius:7px;color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:.07em;cursor:pointer;position:relative;overflow:hidden;transition:box-shadow .3s;}
+.run-btn:hover{box-shadow:0 0 28px rgba(255,107,0,.55);}
+.ripple-c{position:absolute;border-radius:50%;background:rgba(0,0,0,.22);transform:scale(0);animation:ripple .6s linear;pointer-events:none;}
+
+/* ── PAGE 2: SIGNAL INTELLIGENCE ── */
+.sig-card{background:var(--bg-card);border:1px solid var(--border);border-left:4px solid var(--orange);border-radius:7px;padding:14px;}
+.sig-card.sg{border-left-color:var(--green);}
+.sig-card.sb{border-left-color:var(--blue);}
+.sig-src{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sig-card.sg .sig-src{color:var(--green);}.sig-card.sb .sig-src{color:var(--blue);}
+.sig-text{font-size:12px;color:var(--text);line-height:1.55;margin-bottom:9px;font-style:italic;}
+.sig-meta{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--muted);}
+
+.conflict-box{background:rgba(255,107,0,.06);border:1px solid rgba(255,107,0,.4);border-radius:7px;padding:16px;margin-top:18px;}
+.cb-hdr{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--orange);letter-spacing:.06em;margin-bottom:10px;}
+.cb-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:6px;font-size:12px;color:var(--muted);}
+.cb-label{font-weight:600;color:var(--orange);min-width:90px;}
+.fuse-result{background:var(--bg-card);border:1px solid var(--border);border-radius:7px;padding:14px;margin-top:14px;}
+.fuse-hdr{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--green);margin-bottom:8px;}
+
+/* ── PAGE 3: AGENT PIPELINE ── */
+.agent-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px;position:relative;overflow:hidden;transition:border-color .4s,box-shadow .4s;}
+.agent-card.running{border-color:var(--orange);box-shadow:0 0 20px var(--og);}
+.agent-card.done{border-color:rgba(0,200,83,.4);}
+.ac-top{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.ac-num{width:32px;height:32px;border-radius:50%;background:var(--og);border:2px solid var(--orange);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:var(--orange);flex-shrink:0;}
+.ac-name{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;color:var(--text);}
+.ac-status-pill{margin-left:auto;}
+.ac-io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.ac-io-box{background:var(--bg-panel);border:1px solid var(--border);border-radius:5px;padding:11px;}
+.ac-io-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.ac-io-val{font-size:11px;color:var(--text);line-height:1.6;}
+.json-block{background:#000;border:1px solid rgba(255,107,0,.2);border-radius:5px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#00C853;line-height:1.7;margin-top:8px;white-space:pre-wrap;word-break:break-all;}
+.ac-proc{background:rgba(255,107,0,.05);border:1px solid rgba(255,107,0,.2);border-radius:5px;padding:11px;margin-bottom:10px;}
+.ac-proc-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
+.ac-proc-item{font-size:11px;color:var(--muted);line-height:1.7;display:flex;align-items:flex-start;gap:6px;}
+.ac-proc-item::before{content:'▸';color:var(--orange);flex-shrink:0;}
+.conf-bar-wrap{margin-top:10px;}
+.conf-lbl{font-size:10px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:3px;}
+.tradeoff-box{background:rgba(255,45,45,.05);border:1px solid rgba(255,45,45,.3);border-radius:5px;padding:11px;margin-top:10px;}
+.tb-hdr{font-size:11px;font-weight:700;color:var(--red);letter-spacing:.07em;margin-bottom:5px;}
+.tb-txt{font-size:11px;color:var(--muted);line-height:1.6;}
+
+.pipeline-run-btn{width:100%;height:64px;background:linear-gradient(135deg,#FF6B00,#FF8C00);border:none;border-radius:7px;color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:.08em;cursor:pointer;position:relative;overflow:hidden;transition:box-shadow .3s;margin-bottom:18px;}
+.pipeline-run-btn:hover{box-shadow:0 0 28px rgba(255,107,0,.55);}
+
+.terminal{background:#000;border:1px solid rgba(255,107,0,.2);border-radius:6px;padding:12px;height:180px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8;margin-bottom:18px;}
+.t-o{color:var(--orange);display:block;}.t-g{color:var(--green);display:block;}.t-m{color:var(--muted);display:block;}
+.t-cur{display:inline-block;width:8px;height:12px;background:var(--orange);animation:blink 1s step-end infinite;vertical-align:middle;margin-left:2px;}
+
+/* ── PAGE 4: RESOURCE ALLOCATION ── */
+.res-table{width:100%;border-collapse:collapse;font-size:12px;}
+.res-table th{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:0 8px 10px;text-align:left;border-bottom:1px solid var(--border);}
+.res-table td{padding:9px 8px;border-bottom:1px solid rgba(255,107,0,.07);color:var(--text);vertical-align:middle;}
+.res-table tr:last-child td{border-bottom:none;}
+.sp{padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.05em;}
+.sp-e{background:rgba(255,107,0,.15);color:var(--orange);border:1px solid rgba(255,107,0,.3);}
+.sp-d{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.sp-a{background:rgba(255,193,7,.15);color:var(--amber);border:1px solid rgba(255,193,7,.3);}
+.sp-s{background:rgba(136,136,136,.15);color:var(--muted);border:1px solid rgba(136,136,136,.3);}
+.route-cell{font-size:11px;color:var(--muted);}
+
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.ba-box{background:var(--bg-card);border:1px solid var(--border);border-radius:7px;padding:14px;}
+.ba-lbl{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.ba-lbl.before{color:var(--red);}.ba-lbl.after{color:var(--green);}
+
+/* ── PAGE 5: ALERTS & COMMS ── */
+.alert-card{border-radius:7px;padding:14px;margin-bottom:12px;border:1px solid var(--border);background:var(--bg-card);}
+.alert-card.ac-r{border-color:rgba(255,45,45,.4);background:rgba(255,45,45,.04);}
+.alert-card.ac-o{border-color:rgba(255,107,0,.4);background:rgba(255,107,0,.04);}
+.ach{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.ach.r{color:var(--red);}.ach.o{color:var(--orange);}
+.strike{text-decoration:line-through;color:var(--red);font-size:12px;line-height:1.5;}
+.au{color:var(--green);font-size:12px;margin:3px 0;}
+.am{font-size:11px;color:var(--muted);margin-top:5px;}
+.at{font-size:12px;color:var(--muted);line-height:1.6;margin:3px 0;}
+.lang-row{display:flex;gap:6px;margin-top:6px;}
+
+.sk-row{display:flex;align-items:flex-start;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,107,0,.07);}
+.sk-row:last-child{border-bottom:none;}
+.sk-l{display:flex;align-items:flex-start;gap:8px;}
+.sk-icon{font-size:15px;flex-shrink:0;margin-top:2px;}
+.sk-name{font-size:12px;font-weight:600;color:var(--text);}
+.sk-msg{font-size:11px;color:var(--muted);line-height:1.55;margin-top:2px;}
+.sk-sent{font-size:11px;font-weight:600;color:var(--green);white-space:nowrap;margin-top:2px;}
+
+.traffic-box{background:var(--bg-card);border:1px solid var(--border);border-radius:7px;padding:16px;}
+.traffic-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.traffic-label{font-size:11px;font-weight:600;color:var(--muted);width:120px;flex-shrink:0;}
+.traffic-bar{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.traffic-fill{height:100%;border-radius:4px;animation:fillBar 1.5s ease forwards;}
+.traffic-val{font-family:'JetBrains Mono',monospace;font-size:12px;width:40px;text-align:right;}
+
+/* ── PAGE 6: AI CHAT ── */
+.chat-page{display:flex;flex-direction:column;height:calc(100vh - 145px);min-height:500px;}
+.chat-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:13px;background:var(--bg);border:1px solid var(--border);border-radius:7px 7px 0 0;}
+.chat-msg{display:flex;gap:10px;align-items:flex-start;}
+.chat-msg.u{flex-direction:row-reverse;}
+.cav{width:34px;height:34px;background:var(--og);border:1px solid var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;box-shadow:0 0 10px var(--og);}
+.uav{width:34px;height:34px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.cbub{background:var(--bg-card);border:1px solid var(--border);border-radius:7px;padding:10px 13px;font-size:13px;color:var(--text);line-height:1.65;max-width:calc(100% - 48px);}
+.cbub.u{background:rgba(255,107,0,.1);border-color:rgba(255,107,0,.3);}
+.tdots{display:flex;gap:4px;align-items:center;padding:2px 0;}
+.td{width:8px;height:8px;background:var(--orange);border-radius:50%;}
+.td:nth-child(1){animation:bounce .8s ease-in-out infinite;}
+.td:nth-child(2){animation:bounce .8s ease-in-out .2s infinite;}
+.td:nth-child(3){animation:bounce .8s ease-in-out .4s infinite;}
+.chips-row{padding:8px 12px;display:flex;flex-wrap:wrap;gap:6px;background:var(--bg-panel);border-left:1px solid var(--border);border-right:1px solid var(--border);}
+.chip{background:rgba(255,107,0,.07);border:1px solid rgba(255,107,0,.22);border-radius:20px;padding:5px 11px;font-size:12px;color:var(--orange);cursor:pointer;transition:background .2s,box-shadow .2s;white-space:nowrap;}
+.chip:hover{background:rgba(255,107,0,.18);box-shadow:0 0 8px var(--og);}
+.chat-input-row{display:flex;gap:8px;padding:10px 12px;border:1px solid var(--border);border-top:none;border-radius:0 0 7px 7px;background:var(--bg-panel);}
+.cinput{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:9px 13px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.cinput::placeholder{color:var(--muted);}
+.cinput:focus{border-color:var(--orange);}
+.csend{width:40px;height:40px;background:var(--orange);border:none;border-radius:5px;color:#000;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:background .2s,box-shadow .2s;flex-shrink:0;}
+.csend:hover{background:#FF8C00;box-shadow:0 0 12px var(--og);}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--orange);padding:12px 22px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted);background:var(--bg);position:relative;z-index:1;}
+footer a{color:var(--orange);text-decoration:none;}footer a:hover{opacity:.8;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  .metric-grid{grid-template-columns:repeat(2,1fr);}
+  .grid4{grid-template-columns:repeat(2,1fr);}
+  .ac-io{grid-template-columns:1fr;}
+  .before-after{grid-template-columns:1fr;}
+}
+@media(max-width:760px){
+  header{flex-wrap:wrap;}.hc{order:3;width:100%;}
+  .metric-grid{grid-template-columns:repeat(2,1fr);}
+  .crisis-row,.grid2,.grid3,.grid4{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
-
-<!-- PARTICLES -->
 <div id="particles"></div>
 
-<div class="container">
-
-<!-- ============================================================ HEADER -->
+<!-- ══════════════════════════ HEADER ══════════════════════════ -->
 <header>
-  <div class="header-left">
+  <div class="hl">
     <div class="logo-wrap">
       <div class="logo-bg"></div>
-      <svg class="logo-svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+      <svg class="logo-svg" width="46" height="46" viewBox="0 0 48 48" fill="none">
         <path d="M24 4L8 10v14c0 9 7 17 16 20 9-3 16-11 16-20V10L24 4z" fill="rgba(255,107,0,0.12)" stroke="#FF6B00" stroke-width="1.5"/>
-        <path d="M24 8L12 13v11c0 7 5.5 13.5 12 16 6.5-2.5 12-9 12-16V13L24 8z" fill="rgba(255,107,0,0.06)"/>
         <circle cx="24" cy="24" r="5" fill="none" stroke="#FF6B00" stroke-width="1.5"/>
         <g class="radar-sweep">
-          <line x1="24" y1="24" x2="24" y2="10" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" opacity="0.95"/>
-          <path d="M24 24 L24 10 A14 14 0 0 1 33 14 Z" fill="rgba(255,107,0,0.22)"/>
+          <line x1="24" y1="24" x2="24" y2="10" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" opacity=".95"/>
+          <path d="M24 24L24 10A14 14 0 0 1 33 14Z" fill="rgba(255,107,0,0.22)"/>
         </g>
-        <line x1="20" y1="24" x2="28" y2="24" stroke="#FF6B00" stroke-width="0.7" opacity="0.45"/>
-        <line x1="24" y1="20" x2="24" y2="28" stroke="#FF6B00" stroke-width="0.7" opacity="0.45"/>
+        <line x1="20" y1="24" x2="28" y2="24" stroke="#FF6B00" stroke-width=".7" opacity=".45"/>
+        <line x1="24" y1="20" x2="24" y2="28" stroke="#FF6B00" stroke-width=".7" opacity=".45"/>
       </svg>
     </div>
     <div>
@@ -746,571 +292,790 @@ footer a:hover { opacity:0.8; }
       <div class="brand-sub">Crisis Intelligence &amp; Response Orchestrator</div>
     </div>
   </div>
-
-  <div class="header-center">
-    <div class="header-tagline">
-      <span class="word">DETECT</span><span class="dot">•</span>
-      <span class="word">ANALYZE</span><span class="dot">•</span>
-      <span class="word">DECIDE</span><span class="dot">•</span>
-      <span class="word">DEPLOY</span><span class="dot">•</span>
-      <span class="word">PROTECT</span>
+  <div class="hc">
+    <div class="tagline">
+      <span class="w">DETECT</span><span class="d">•</span>
+      <span class="w">ANALYZE</span><span class="d">•</span>
+      <span class="w">DECIDE</span><span class="d">•</span>
+      <span class="w">DEPLOY</span><span class="d">•</span>
+      <span class="w">PROTECT</span>
     </div>
   </div>
-
-  <div class="header-right">
-    <div class="status-online">
-      <div class="status-dot-green"></div>
-      SYSTEM ONLINE
-    </div>
-    <div class="header-clock">
-      <span class="clock-val" id="clock">--:--:--</span>
-      <span class="clock-label">PKT &nbsp;|&nbsp; 28°C ☁ Islamabad</span>
+  <div class="hr">
+    <div class="sol"><div class="sdg"></div>SYSTEM ONLINE</div>
+    <div class="hclock">
+      <span class="cv" id="clock">--:--:--</span>
+      <span class="cl">PKT &nbsp;|&nbsp; 28°C ☁ Islamabad</span>
     </div>
   </div>
 </header>
 
-<!-- ============================================================ MAIN -->
-<main>
+<!-- ══════════════════════════ NAV ══════════════════════════ -->
+<nav id="nav">
+  <div class="nav-tab active" data-page="p1" onclick="goPage('p1',this)">⚡ Command Center</div>
+  <div class="nav-tab" data-page="p2" onclick="goPage('p2',this)">📡 Signal Intelligence</div>
+  <div class="nav-tab" data-page="p3" onclick="goPage('p3',this)">🤖 Agent Pipeline</div>
+  <div class="nav-tab" data-page="p4" onclick="goPage('p4',this)">📦 Resources</div>
+  <div class="nav-tab" data-page="p5" onclick="goPage('p5',this)">📢 Alerts &amp; Comms</div>
+  <div class="nav-tab" data-page="p6" onclick="goPage('p6',this)">🧠 CIRO AI Chat</div>
+</nav>
 
-<!-- ---- HERO METRICS ---- -->
-<div class="hero-metrics">
-  <div class="metric-card" style="animation-delay:0.05s">
-    <div class="metric-icon-wrap"><div class="metric-icon-bg"></div><div class="metric-icon">⚡</div></div>
-    <div>
-      <div class="metric-label">Active Crises</div>
-      <div class="metric-value c-red" data-target="2" id="m0">0</div>
-    </div>
-  </div>
-  <div class="metric-card" style="animation-delay:0.15s">
-    <div class="metric-icon-wrap"><div class="metric-icon-bg"></div><div class="metric-icon">🚀</div></div>
-    <div>
-      <div class="metric-label">Resources Deployed</div>
-      <div class="metric-value c-orange" data-target="9" id="m1">0</div>
-    </div>
-  </div>
-  <div class="metric-card" style="animation-delay:0.25s">
-    <div class="metric-icon-wrap"><div class="metric-icon-bg"></div><div class="metric-icon">⚡</div></div>
-    <div>
-      <div class="metric-label">Avg Response</div>
-      <div class="metric-value c-green" data-target="8" data-suffix="s" id="m2">0</div>
-    </div>
-  </div>
-  <div class="metric-card" style="animation-delay:0.35s">
-    <div class="metric-icon-wrap"><div class="metric-icon-bg"></div><div class="metric-icon">🛡</div></div>
-    <div>
-      <div class="metric-label">Lives Protected</div>
-      <div class="metric-value c-orange" data-target="20000" data-suffix="+" id="m3">0</div>
-    </div>
-  </div>
-</div>
+<!-- ══════════════════════════ PAGE 1: COMMAND CENTER ══════════════════════════ -->
+<div class="page active" id="p1">
 
-<!-- ---- SIGNAL FEED ---- -->
-<div class="sec-hdr"><div class="pulse-dot"></div> 📡 Live Signal Intelligence</div>
-<div class="signal-grid">
-
-  <div class="signal-card" style="animation-delay:0.1s">
-    <div class="sig-src">Twitter/X <span class="badge b-orange">Social</span></div>
-    <div class="sig-text">"G-10 mein pani bhar gaya hai, gaariyan phans gayi hain!"</div>
-    <div class="cred-label"><span>Credibility</span><span>70%</span></div>
-    <div class="cred-bar"><div class="cred-fill" style="width:70%"></div></div>
-    <div class="sig-meta"><span>14:30 PKT</span><span class="badge b-orange">Urdu</span></div>
+  <div class="metric-grid">
+    <div class="mc"><div class="mic"><div class="mib"></div><div class="mi">⚡</div></div><div><div class="ml">Active Crises</div><div class="mv c-r" data-target="2" id="m0">0</div></div></div>
+    <div class="mc"><div class="mic"><div class="mib"></div><div class="mi">🚀</div></div><div><div class="ml">Resources Deployed</div><div class="mv c-o" data-target="9" id="m1">0</div></div></div>
+    <div class="mc"><div class="mic"><div class="mib"></div><div class="mi">⚡</div></div><div><div class="ml">Avg Response</div><div class="mv c-g" data-target="8" data-suffix="s" id="m2">0</div></div></div>
+    <div class="mc"><div class="mic"><div class="mib"></div><div class="mi">🛡</div></div><div><div class="ml">Lives Protected</div><div class="mv c-o" data-target="20000" data-suffix="+" id="m3">0</div></div></div>
   </div>
 
-  <div class="signal-card" style="animation-delay:0.2s">
-    <div class="sig-src">Facebook <span class="badge b-blue">Social</span></div>
-    <div class="sig-text">"Flash flooding on Jinnah Avenue near G-10"</div>
-    <div class="cred-label"><span>Credibility</span><span>65%</span></div>
-    <div class="cred-bar"><div class="cred-fill" style="width:65%"></div></div>
-    <div class="sig-meta"><span>14:28 PKT</span><span class="badge b-blue">English</span></div>
-  </div>
-
-  <div class="signal-card bl-green" style="animation-delay:0.3s">
-    <div class="sig-src">Field Report <span class="badge b-green">Verified</span></div>
-    <div class="sig-text">"Water main burst on Street 12, G-10 — NOT flooding"</div>
-    <div class="cred-label"><span>Credibility</span><span>90%</span></div>
-    <div class="cred-bar"><div class="cred-fill cf-green" style="width:90%"></div></div>
-    <div class="sig-meta"><span>14:35 PKT</span><span class="badge b-green">HIGH CREDIBILITY</span></div>
-  </div>
-
-  <div class="signal-card bl-blue" style="animation-delay:0.4s">
-    <div class="sig-src">OpenWeatherMap <span class="badge b-blue">Live API Data</span></div>
-    <div class="sig-text">🌧 Islamabad: 28°C | Rainfall: 12mm/hr | Humidity: 78%</div>
-    <div class="cred-label"><span>API Confidence</span><span>98%</span></div>
-    <div class="cred-bar"><div class="cred-fill cf-blue" style="width:98%"></div></div>
-    <div class="sig-meta"><span id="wtime">Live</span><span class="badge b-blue">Auto-refresh</span></div>
-  </div>
-
-</div>
-
-<!-- ---- 3-COLUMN GRID ---- -->
-<div class="three-col">
-
-  <!-- COL 1: THREAT ANALYSIS -->
-  <div class="panel">
-    <div class="panel-hdr">⚠ Active Threats <span class="badge b-red">2</span></div>
-
+  <div class="sec"><div class="pd"></div>⚠ Active Crisis Situations</div>
+  <div class="crisis-row">
     <div class="crisis-card">
-      <div class="crisis-top">
-        <div class="crisis-title">G-10 ISLAMABAD</div>
-        <span class="badge b-orange" style="font-size:9px">CONFLICT DETECTED</span>
-      </div>
-      <div class="crisis-sub">⚠ WATER EMERGENCY</div>
-      <div class="sev-label"><span>Severity</span><span>8/10</span></div>
+      <div class="ctop"><div class="ctitle">G-10 ISLAMABAD</div><span class="badge b-o" style="font-size:9px">CONFLICT DETECTED</span></div>
+      <div class="csub">⚠ WATER EMERGENCY</div>
+      <div class="sl"><span>Severity</span><span>8/10</span></div>
       <div class="sev-bar"><div class="sev-fill" style="width:80%"></div></div>
-      <div class="tags">
-        <span class="tag">urban_flooding</span>
-        <span class="tag">water_main_burst</span>
-      </div>
-      <div class="crisis-risk">👥 5,000 at risk</div>
-      <div style="margin-bottom:9px"><span class="badge b-amber">FIELD VERIFICATION PENDING</span></div>
+      <div class="tags"><span class="tag">urban_flooding</span><span class="tag">water_main_burst</span></div>
+      <div class="crisk">👥 5,000 at risk</div>
+      <div style="margin-bottom:8px"><span class="badge b-a">FIELD VERIFICATION PENDING</span></div>
       <div class="conf-row">
-        <svg class="conf-arc" viewBox="0 0 36 36">
-          <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,107,0,0.12)" stroke-width="4"/>
-          <circle cx="18" cy="18" r="14" fill="none" stroke="#FF6B00" stroke-width="4"
-            stroke-dasharray="52.8 87.96" stroke-dashoffset="21.99"
-            transform="rotate(-90 18 18)" stroke-linecap="round"/>
-        </svg>
-        <div><div class="conf-val">60%</div><div class="conf-text">Confidence</div></div>
-        <div style="margin-left:auto;font-size:10px;color:var(--text-muted)">14:30 PKT</div>
+        <svg class="carc" viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,107,0,.12)" stroke-width="4"/><circle cx="18" cy="18" r="14" fill="none" stroke="#FF6B00" stroke-width="4" stroke-dasharray="52.8 87.96" stroke-dashoffset="21.99" transform="rotate(-90 18 18)" stroke-linecap="round"/></svg>
+        <div><div class="cv2">60%</div><div class="ct">Confidence</div></div>
+        <div style="margin-left:auto;font-size:10px;color:var(--muted)">14:30 PKT</div>
       </div>
     </div>
-
     <div class="crisis-card">
-      <div class="crisis-top">
-        <div class="crisis-title">SADDAR RAWALPINDI</div>
-        <span class="badge b-green" style="font-size:9px">ACTIVE</span>
-      </div>
-      <div class="crisis-sub orange">🌡 EXTREME HEATWAVE</div>
-      <div class="heat-temp">47°C</div>
-      <div class="sev-label"><span>Severity</span><span>7/10</span></div>
+      <div class="ctop"><div class="ctitle">SADDAR RAWALPINDI</div><span class="badge b-g" style="font-size:9px">ACTIVE</span></div>
+      <div class="csub o">🌡 EXTREME HEATWAVE</div>
+      <div class="heat">47°C</div>
+      <div class="sl"><span>Severity</span><span>7/10</span></div>
       <div class="sev-bar"><div class="sev-fill" style="width:70%"></div></div>
-      <div class="crisis-risk">👥 15,000 at risk</div>
+      <div class="crisk">👥 15,000 at risk</div>
       <div class="conf-row">
-        <svg class="conf-arc" viewBox="0 0 36 36">
-          <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,107,0,0.12)" stroke-width="4"/>
-          <circle cx="18" cy="18" r="14" fill="none" stroke="#FF6B00" stroke-width="4"
-            stroke-dasharray="82.4 87.96" stroke-dashoffset="21.99"
-            transform="rotate(-90 18 18)" stroke-linecap="round"/>
-        </svg>
-        <div><div class="conf-val">94%</div><div class="conf-text">Confidence</div></div>
-        <div style="margin-left:auto;font-size:10px;color:var(--text-muted)">14:25 PKT</div>
+        <svg class="carc" viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,107,0,.12)" stroke-width="4"/><circle cx="18" cy="18" r="14" fill="none" stroke="#FF6B00" stroke-width="4" stroke-dasharray="82.4 87.96" stroke-dashoffset="21.99" transform="rotate(-90 18 18)" stroke-linecap="round"/></svg>
+        <div><div class="cv2">94%</div><div class="ct">Confidence</div></div>
+        <div style="margin-left:auto;font-size:10px;color:var(--muted)">14:25 PKT</div>
       </div>
     </div>
   </div>
 
-  <!-- COL 2: AGENT COMMAND CENTER -->
-  <div class="panel">
-    <div class="panel-hdr">🤖 Antigravity Agents</div>
+  <div class="sec"><div class="pd"></div>Agent Status Strip</div>
+  <div class="agent-strip">
+    <div class="ast"><div class="ast-dot"></div><div class="ast-name">SignalFusionAgent</div></div>
+    <div class="ast-sep">›</div>
+    <div class="ast"><div class="ast-dot"></div><div class="ast-name">CrisisClassifierAgent</div></div>
+    <div class="ast-sep">›</div>
+    <div class="ast"><div class="ast-dot"></div><div class="ast-name">ResourceAllocatorAgent</div></div>
+    <div class="ast-sep">›</div>
+    <div class="ast"><div class="ast-dot"></div><div class="ast-name">ResponseCoordinatorAgent</div></div>
+    <div class="ast-sep">›</div>
+    <div class="ast"><div class="ast-dot"></div><div class="ast-name">CiroAssistantAgent</div></div>
+  </div>
 
-    <button class="pipeline-btn" id="pipelineBtn" onclick="runPipeline(event)">▶ INITIALIZE CIRO PIPELINE</button>
+  <button class="run-btn" onclick="goPageByName('p3')">▶ RUN CIRO PIPELINE — AGENT PIPELINE →</button>
 
-    <div class="agent-list">
-      <div class="agent-row" id="ag0"><div class="agent-ind" id="ai0"></div><div class="agent-name">SignalFusionAgent</div><div class="agent-status" id="as0">STANDBY</div></div>
-      <div class="agent-connector" id="ac0"></div>
-      <div class="agent-row" id="ag1"><div class="agent-ind" id="ai1"></div><div class="agent-name">CrisisClassifierAgent</div><div class="agent-status" id="as1">STANDBY</div></div>
-      <div class="agent-connector" id="ac1"></div>
-      <div class="agent-row" id="ag2"><div class="agent-ind" id="ai2"></div><div class="agent-name">ResourceAllocatorAgent</div><div class="agent-status" id="as2">STANDBY</div></div>
-      <div class="agent-connector" id="ac2"></div>
-      <div class="agent-row" id="ag3"><div class="agent-ind" id="ai3"></div><div class="agent-name">ResponseCoordinatorAgent</div><div class="agent-status" id="as3">STANDBY</div></div>
-      <div class="agent-connector" id="ac3"></div>
-      <div class="agent-row" id="ag4"><div class="agent-ind" id="ai4"></div><div class="agent-name">CiroAssistantAgent</div><div class="agent-status" id="as4">STANDBY</div></div>
+</div>
+
+<!-- ══════════════════════════ PAGE 2: SIGNAL INTELLIGENCE ══════════════════════════ -->
+<div class="page" id="p2">
+
+  <div class="sec"><div class="pd"></div>📡 Live Signal Feed — 4 Sources Active</div>
+
+  <div class="grid4" style="margin-bottom:18px">
+
+    <div class="sig-card">
+      <div class="sig-src">Twitter/X <span class="badge b-o">Social</span></div>
+      <div class="sig-text">"G-10 mein pani bhar gaya hai, gaariyan phans gayi hain! Koi help karo yaar, road bilkul band ho gayi hai."</div>
+      <div style="font-size:10px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:3px"><span>Credibility</span><span>70%</span></div>
+      <div class="cred-bar"><div class="cred-fill" style="width:70%"></div></div>
+      <div class="sig-meta"><span>14:30 PKT</span><span class="badge b-o">Urdu</span></div>
     </div>
 
-    <div class="terminal" id="terminal">
-      <span class="t-line muted">&gt; CIRO Pipeline v2.1 ready. Click INITIALIZE to run.</span>
-      <span class="t-cursor" id="termCursor"></span>
+    <div class="sig-card">
+      <div class="sig-src">Facebook <span class="badge b-b">Social</span></div>
+      <div class="sig-text">"Flash flooding on Jinnah Avenue near G-10 sector. Cars stuck, water rising fast. Avoid the area immediately."</div>
+      <div style="font-size:10px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:3px"><span>Credibility</span><span>65%</span></div>
+      <div class="cred-bar"><div class="cred-fill" style="width:65%"></div></div>
+      <div class="sig-meta"><span>14:28 PKT</span><span class="badge b-b">English</span></div>
+    </div>
+
+    <div class="sig-card sg">
+      <div class="sig-src">Field Report — Rescue 1122 <span class="badge b-g">Verified</span></div>
+      <div class="sig-text">"Water main burst on Street 12, G-10 sector. NOT a flooding event. WASA infrastructure failure. Cars affected by burst water pressure, NOT overflow."</div>
+      <div style="font-size:10px;color:var(--green);display:flex;justify-content:space-between;margin-bottom:3px"><span>Credibility</span><span style="font-weight:700">90%</span></div>
+      <div class="cred-bar"><div class="cred-fill cf-g" style="width:90%"></div></div>
+      <div class="sig-meta"><span>14:35 PKT</span><span class="badge b-g">HIGH CREDIBILITY</span></div>
+    </div>
+
+    <div class="sig-card sb">
+      <div class="sig-src">OpenWeatherMap API <span class="badge b-b">Live API</span></div>
+      <div class="sig-text">🌧 Islamabad: 28°C. Rainfall: 12mm/hr. Humidity: 78%. Wind: 14km/h NW. No flood watch in effect for G-10 or adjacent sectors.</div>
+      <div style="font-size:10px;color:var(--blue);display:flex;justify-content:space-between;margin-bottom:3px"><span>API Confidence</span><span style="font-weight:700">100%</span></div>
+      <div class="cred-bar"><div class="cred-fill cf-b" style="width:100%"></div></div>
+      <div class="sig-meta"><span id="wtime2">Live PKT</span><span class="badge b-b">Auto-refresh</span></div>
+    </div>
+
+  </div>
+
+  <div class="conflict-box">
+    <div class="cb-hdr">⚡ CONFLICT DETECTED: Sources disagree on G-10 incident type</div>
+    <div class="cb-row"><span class="cb-label">Social Media:</span><span>Reporting urban flooding — cars submerged, roads blocked by water overflow (credibility: 65–70%)</span></div>
+    <div class="cb-row"><span class="cb-label">Field Report:</span><span>Rescue 1122 on scene — confirms water main burst, NOT flooding (credibility: 90%)</span></div>
+    <div class="cb-row"><span class="cb-label">Weather API:</span><span>No active flood watch; 12mm/hr rainfall insufficient for G-10 sector flooding (credibility: 100%)</span></div>
+    <div class="cb-row" style="margin-top:8px"><span class="cb-label" style="color:var(--green)">Resolution:</span><span style="color:var(--green);font-weight:600">Field report + API weighted higher. Hypothesis: WATER MAIN BURST — ruling out flooding. Confidence: 60% (pending WASA confirmation).</span></div>
+  </div>
+
+  <div class="fuse-result">
+    <div class="fuse-hdr">✅ Signal Fusion Result — SignalFusionAgent Output</div>
+    <div class="grid2">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">G-10 Incident Summary:</div>
+        <div style="font-size:12px;color:var(--text);line-height:1.7;">
+          Primary hypothesis: <strong style="color:var(--orange)">Water main burst</strong><br>
+          Secondary hypothesis: Urban flooding (ruled out)<br>
+          Evidence weight: Field 90% + API 100% vs Social 65–70%<br>
+          Final confidence: <strong style="color:var(--orange)">60%</strong> (pending WASA on-site)<br>
+          Recommended action: Dispatch WASA + block roads
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Saddar Incident (independent):</div>
+        <div style="font-size:12px;color:var(--text);line-height:1.7;">
+          Primary hypothesis: <strong style="color:var(--orange)">Extreme heatwave 47°C</strong><br>
+          All sources agree — no conflict<br>
+          Meteorological data confirmed<br>
+          Final confidence: <strong style="color:var(--orange)">94%</strong><br>
+          Recommended action: Medical deployment
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- COL 3: RESOURCE MATRIX -->
-  <div class="panel">
-    <div class="panel-hdr">📡 Live Deployment <span class="badge b-orange">9 Deployed</span></div>
+</div>
 
+<!-- ══════════════════════════ PAGE 3: AGENT PIPELINE ══════════════════════════ -->
+<div class="page" id="p3">
+
+  <button class="pipeline-run-btn" id="pipeBtn" onclick="runPipeline(event)">▶ RUN ALL AGENTS — EXECUTE CIRO PIPELINE</button>
+
+  <div class="terminal" id="terminal">
+    <span class="t-m">&gt; CIRO Multi-Agent Pipeline v2.1 | 5 agents configured | Click RUN to execute.</span>
+    <span class="t-cur" id="tCur"></span>
+  </div>
+
+  <!-- Agent 1 -->
+  <div class="agent-card" id="ac0">
+    <div class="ac-top">
+      <div class="ac-num">01</div>
+      <div><div class="ac-name">SignalFusionAgent</div><div style="font-size:11px;color:var(--muted)">Fuses multi-source signals, scores credibility, detects conflicts</div></div>
+      <div class="ac-status-pill"><span class="badge b-m" id="as0">STANDBY</span></div>
+    </div>
+    <div class="ac-proc">
+      <div class="ac-proc-lbl">Processing Steps</div>
+      <div class="ac-proc-item">Ingest 4 signals: Twitter, Facebook, Field Report, OpenWeatherMap</div>
+      <div class="ac-proc-item">Score credibility using source reputation + corroboration weights</div>
+      <div class="ac-proc-item">Detect hypothesis conflicts (flooding vs water main burst)</div>
+      <div class="ac-proc-item">Weighted resolution — field report + API overrides social media</div>
+    </div>
+    <div class="ac-io">
+      <div class="ac-io-box">
+        <div class="ac-io-lbl">📥 Input (4 signals)</div>
+        <div class="ac-io-val">
+          🐦 Twitter/X — Urdu flood report<br>
+          📘 Facebook — English flood report<br>
+          📋 Rescue 1122 Field Report<br>
+          🌦 OpenWeatherMap Live API
+        </div>
+      </div>
+      <div class="ac-io-box">
+        <div class="ac-io-lbl">📤 Output — fusedSignals JSON</div>
+        <div class="json-block">{
+  "g10": {
+    "hypothesis": "water_main_burst",
+    "confidence": 0.60,
+    "conflict": true,
+    "winner": "field_report"
+  },
+  "saddar": {
+    "hypothesis": "heatwave_47c",
+    "confidence": 0.94,
+    "conflict": false
+  }
+}</div>
+      </div>
+    </div>
+    <div class="conf-bar-wrap">
+      <div class="conf-lbl"><span>Agent Confidence</span><span>60%</span></div>
+      <div class="cred-bar"><div class="cred-fill" style="width:60%"></div></div>
+    </div>
+  </div>
+
+  <!-- Agent 2 -->
+  <div class="agent-card" id="ac1">
+    <div class="ac-top">
+      <div class="ac-num">02</div>
+      <div><div class="ac-name">CrisisClassifierAgent</div><div style="font-size:11px;color:var(--muted)">Classifies crises, assigns severity, generates risk profiles</div></div>
+      <div class="ac-status-pill"><span class="badge b-m" id="as1">STANDBY</span></div>
+    </div>
+    <div class="ac-proc">
+      <div class="ac-proc-lbl">Processing Steps</div>
+      <div class="ac-proc-item">Receive fusedSignals JSON from Agent 1</div>
+      <div class="ac-proc-item">Classify G-10: urban_flooding (low) + water_main_burst (high) — dual hypothesis</div>
+      <div class="ac-proc-item">Classify Saddar: heatwave confirmed — 47°C exceeds danger threshold (45°C)</div>
+      <div class="ac-proc-item">Assign severity scores: G-10 = 8/10, Saddar = 7/10</div>
+    </div>
+    <div class="ac-io">
+      <div class="ac-io-box">
+        <div class="ac-io-lbl">📥 Input — fusedSignals</div>
+        <div class="ac-io-val">G-10 → water_main_burst (60%)<br>Saddar → heatwave_47c (94%)<br>Population at risk: G-10: 5k<br>Population at risk: Saddar: 15k</div>
+      </div>
+      <div class="ac-io-box">
+        <div class="ac-io-lbl">📤 Output — crises JSON</div>
+        <div class="json-block">{
+  "crises": [
+    {
+      "id": "g10-001",
+      "type": "water_main_burst",
+      "severity": 8,
+      "at_risk": 5000,
+      "verify_needed": true
+    },
+    {
+      "id": "saddar-001",
+      "type": "extreme_heatwave",
+      "temp_c": 47,
+      "severity": 7,
+      "at_risk": 15000
+    }
+  ]
+}</div>
+      </div>
+    </div>
+    <div class="conf-bar-wrap">
+      <div class="conf-lbl"><span>Agent Confidence</span><span>72%</span></div>
+      <div class="cred-bar"><div class="cred-fill" style="width:72%"></div></div>
+    </div>
+  </div>
+
+  <!-- Agent 3 -->
+  <div class="agent-card" id="ac2">
+    <div class="ac-top">
+      <div class="ac-num">03</div>
+      <div><div class="ac-name">ResourceAllocatorAgent</div><div style="font-size:11px;color:var(--muted)">Constraint optimization — allocates 9 resources across 2 crises</div></div>
+      <div class="ac-status-pill"><span class="badge b-m" id="as2">STANDBY</span></div>
+    </div>
+    <div class="ac-proc">
+      <div class="ac-proc-lbl">Processing Steps</div>
+      <div class="ac-proc-item">Load available resources: 9 units across 5 types</div>
+      <div class="ac-proc-item">Priority matrix: G-10 severity 8 (verification pending) vs Saddar severity 7 (confirmed)</div>
+      <div class="ac-proc-item">Optimization: maximize lives protected under resource constraints</div>
+      <div class="ac-proc-item">TRADEOFF: Rescue teams withheld from Saddar — G-10 field verification priority</div>
+    </div>
+    <div class="ac-io">
+      <div class="ac-io-box">
+        <div class="ac-io-lbl">📥 Input — crises + resources</div>
+        <div class="ac-io-val">🚑 2× Ambulances<br>🚔 3× Police Units<br>🚛 2× Water Tankers<br>🏥 1× Med Outreach<br>👥 1× Rescue Team</div>
+      </div>
+      <div class="ac-io-box">
+        <div class="ac-io-lbl">📤 Output — allocations JSON</div>
+        <div class="json-block">{
+  "g10": ["3x_police",
+          "2x_tankers",
+          "1x_rescue"],
+  "saddar": ["2x_ambulance",
+             "1x_med_outreach"],
+  "tradeoff": {
+    "saddar_no_rescue": true,
+    "reason": "g10_verify_first"
+  }
+}</div>
+      </div>
+    </div>
+    <div class="tradeoff-box">
+      <div class="tb-hdr">⚠ TRADEOFF DETECTED</div>
+      <div class="tb-txt">Saddar receives no rescue teams. G-10 field verification takes priority — rescue team held pending WASA confirmation. 15,000 Saddar residents covered by medical outreach only. Punjab Emergency mutual aid requested.</div>
+    </div>
+  </div>
+
+  <!-- Agent 4 -->
+  <div class="agent-card" id="ac3">
+    <div class="ac-top">
+      <div class="ac-num">04</div>
+      <div><div class="ac-name">ResponseCoordinatorAgent</div><div style="font-size:11px;color:var(--muted)">Generates alerts, retracts false alarms, notifies stakeholders</div></div>
+      <div class="ac-status-pill"><span class="badge b-m" id="as3">STANDBY</span></div>
+    </div>
+    <div class="ac-proc">
+      <div class="ac-proc-lbl">Processing Steps</div>
+      <div class="ac-proc-item">Generate bilingual public alerts (Urdu + English)</div>
+      <div class="ac-proc-item">RETRACT flood alert — replace with water main burst advisory</div>
+      <div class="ac-proc-item">Notify 5 stakeholders: PIMS, Police, Rescue 1122, WASA, Command Center</div>
+      <div class="ac-proc-item">Issue heatwave broadcast for Saddar — cooling center locations</div>
+    </div>
+    <div class="ac-io">
+      <div class="ac-io-box">
+        <div class="ac-io-lbl">📥 Input — allocations</div>
+        <div class="ac-io-val">Resources deployed<br>False alarm: flooding<br>Confirmed: water main burst<br>Saddar heatwave confirmed<br>5 stakeholders to notify</div>
+      </div>
+      <div class="ac-io-box">
+        <div class="ac-io-lbl">📤 Output — alerts issued</div>
+        <div class="json-block">{
+  "retracted": "flood_g10",
+  "issued": [
+    "water_main_g10_urdu",
+    "water_main_g10_en",
+    "heatwave_saddar_urdu",
+    "heatwave_saddar_en"
+  ],
+  "stakeholders_notified": 5
+}</div>
+      </div>
+    </div>
+    <div style="background:rgba(255,45,45,.06);border:2px solid rgba(255,45,45,.35);border-radius:6px;padding:12px;margin-top:10px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--red);margin-bottom:6px;">🔴 FALSE ALARM RETRACTION</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7;"><span style="text-decoration:line-through;color:var(--red)">Urban Flooding Emergency — G-10 Islamabad</span><br><span style="color:var(--green)">✓ CORRECTED: Water Main Burst — Street 12, G-10. WASA dispatched. Rescue 1122 stood down from flood response.</span></div>
+    </div>
+  </div>
+
+  <!-- Agent 5 -->
+  <div class="agent-card" id="ac4">
+    <div class="ac-top">
+      <div class="ac-num">05</div>
+      <div><div class="ac-name">CiroAssistantAgent</div><div style="font-size:11px;color:var(--muted)">AI assistant — answers commander queries in Urdu + English</div></div>
+      <div class="ac-status-pill"><span class="badge b-a" id="as4">STANDBY</span></div>
+    </div>
+    <div class="ac-proc">
+      <div class="ac-proc-lbl">Capabilities</div>
+      <div class="ac-proc-item">Real-time Q&amp;A from pipeline knowledge base</div>
+      <div class="ac-proc-item">Bilingual responses (Urdu/English) — no API required</div>
+      <div class="ac-proc-item">Status reports, route guidance, resource queries</div>
+      <div class="ac-proc-item">Awaiting commander queries via CIRO AI Chat interface</div>
+    </div>
+    <div style="text-align:center;padding:12px 0">
+      <button onclick="goPageByName('p6')" style="background:rgba(255,107,0,.1);border:1px solid rgba(255,107,0,.4);border-radius:6px;color:var(--orange);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;padding:10px 24px;cursor:pointer;transition:background .2s;">→ OPEN CIRO AI CHAT</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════ PAGE 4: RESOURCE ALLOCATION ══════════════════════════ -->
+<div class="page" id="p4">
+
+  <div class="sec"><div class="pd"></div>📦 Resource Deployment — Before vs After Pipeline</div>
+
+  <div class="before-after" style="margin-bottom:18px">
+    <div class="ba-box">
+      <div class="ba-lbl before">⚠ BEFORE — Pre-Pipeline State</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.8">
+        🚑 2× Ambulances — <span style="color:var(--red)">HQ STANDBY</span><br>
+        🚔 3× Police Units — <span style="color:var(--red)">HQ STANDBY</span><br>
+        🚛 2× Water Tankers — <span style="color:var(--red)">HQ STANDBY</span><br>
+        🏥 1× Med Outreach — <span style="color:var(--red)">HQ STANDBY</span><br>
+        👥 1× Rescue Team — <span style="color:var(--red)">HQ STANDBY</span><br>
+        <br><strong style="color:var(--red)">0 of 9 resources deployed</strong>
+      </div>
+    </div>
+    <div class="ba-box">
+      <div class="ba-lbl after">✓ AFTER — Post-Pipeline Deployment</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.8">
+        🚑 2× Ambulances — <span style="color:var(--orange)">EN ROUTE → Saddar</span><br>
+        🚔 3× Police Units — <span style="color:var(--green)">DEPLOYED → G-10</span><br>
+        🚛 2× Water Tankers — <span style="color:var(--orange)">EN ROUTE → G-10</span><br>
+        🏥 1× Med Outreach — <span style="color:var(--amber)">DEPLOYING → Saddar</span><br>
+        👥 1× Rescue Team — <span style="color:var(--muted)">STANDBY (verification pending)</span><br>
+        <br><strong style="color:var(--green)">8 of 9 resources active</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:18px">
+    <div class="ph">📋 Live Deployment Table <span class="badge b-o">9 Resources</span></div>
     <table class="res-table">
-      <thead>
-        <tr>
-          <th>Resource</th><th>Qty</th><th>Destination</th><th>Status</th><th>ETA</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Resource</th><th>Qty</th><th>Destination</th><th>Route</th><th>Status</th><th>ETA</th></tr></thead>
       <tbody>
         <tr>
           <td>🚑 Ambulances</td><td>2</td>
-          <td style="font-size:11px;color:var(--text-muted)">Saddar, RWP</td>
-          <td><span class="spill sp-enroute">EN ROUTE</span></td>
+          <td style="font-size:11px;color:var(--muted)">Saddar, RWP</td>
+          <td class="route-cell">Murree Rd → Saddar Chowk</td>
+          <td><span class="sp sp-e">EN ROUTE</span></td>
           <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange)">25m</td>
         </tr>
         <tr>
           <td>🚔 Police Units</td><td>3</td>
-          <td style="font-size:11px;color:var(--text-muted)">G-10, ISB</td>
-          <td><span class="spill sp-deployed">DEPLOYED</span></td>
+          <td style="font-size:11px;color:var(--muted)">G-10, ISB</td>
+          <td class="route-cell">Kashmir Hwy → St. 12 G-10</td>
+          <td><span class="sp sp-d">DEPLOYED</span></td>
           <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green)">8m</td>
         </tr>
         <tr>
           <td>🚛 Water Tankers</td><td>2</td>
-          <td style="font-size:11px;color:var(--text-muted)">G-10, ISB</td>
-          <td><span class="spill sp-enroute">EN ROUTE</span></td>
+          <td style="font-size:11px;color:var(--muted)">G-10, ISB</td>
+          <td class="route-cell">Srinagar Hwy → G-10 Markaz</td>
+          <td><span class="sp sp-e">EN ROUTE</span></td>
           <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange)">15m</td>
         </tr>
         <tr>
           <td>🏥 Med Outreach</td><td>1</td>
-          <td style="font-size:11px;color:var(--text-muted)">Saddar, RWP</td>
-          <td><span class="spill sp-deploying">DEPLOYING</span></td>
+          <td style="font-size:11px;color:var(--muted)">Saddar, RWP</td>
+          <td class="route-cell">GT Rd → RGH Lobby</td>
+          <td><span class="sp sp-a">DEPLOYING</span></td>
           <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber)">22m</td>
         </tr>
         <tr>
           <td>👥 Rescue Teams</td><td>1</td>
-          <td style="font-size:11px;color:var(--text-muted)">HQ Standby</td>
-          <td><span class="spill sp-standby">STANDBY</span></td>
-          <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted)">--</td>
+          <td style="font-size:11px;color:var(--muted)">HQ Standby</td>
+          <td class="route-cell">—</td>
+          <td><span class="sp sp-s">STANDBY</span></td>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">--</td>
         </tr>
       </tbody>
     </table>
-
-    <div class="constraint-box">
-      <div class="constraint-hdr">⚠ RESOURCE CONSTRAINT DETECTED</div>
-      <p>Saddar receives no rescue teams — G-10 field verification takes priority. Requesting Punjab Emergency mutual aid.</p>
-    </div>
   </div>
 
-</div><!-- end three-col -->
-
-<!-- ---- BOTTOM 3-PANEL ---- -->
-<div class="bottom-panels">
-
-  <!-- PANEL 1: PUBLIC BROADCAST -->
-  <div class="panel">
-    <div class="panel-hdr">📢 Public Alerts <span class="badge b-red">3 Alerts</span></div>
-
-    <div class="alert-card ac-red" style="animation-delay:0.1s">
-      <div class="ac-hdr red">🔴 RETRACTED ALERT — CORRECTED <span class="badge b-green" style="font-size:9px">AI VERIFIED</span></div>
-      <div class="strikethrough">Urban Flooding Emergency — G-10</div>
-      <div class="alert-update">✓ Updated: Water Main Burst Confirmed</div>
-      <div class="alert-meta">✓ WASA notified &nbsp;•&nbsp; Rescue 1122 stood down &nbsp;|&nbsp; 14:45 PKT</div>
-    </div>
-
-    <div class="alert-card ac-orange" style="animation-delay:0.25s">
-      <div class="ac-hdr orange">⚠ PRELIMINARY ALERT <span class="badge b-amber">PRELIMINARY</span></div>
-      <div class="alert-txt">G-10 mein paani bhar gaya hai — is area se guzarna avoid karein</div>
-      <div class="alert-txt">Water emergency G-10 — avoid the area</div>
-      <div class="lang-row"><span class="badge b-orange">🇵🇰 Urdu</span><span class="badge b-blue">🇬🇧 English</span></div>
-    </div>
-
-    <div class="alert-card ac-orange" style="animation-delay:0.4s">
-      <div class="ac-hdr orange">🌡 HEATWAVE EMERGENCY — BROADCASTING
-        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--orange);font-family:'Inter',sans-serif;">
-          <span style="width:6px;height:6px;background:var(--orange);border-radius:50%;animation:pulse 1.5s ease-in-out infinite;flex-shrink:0;display:inline-block"></span> ACTIVE
-        </span>
+  <div class="grid2">
+    <div style="background:rgba(255,107,0,.05);border:1px solid rgba(255,107,0,.4);border-radius:7px;padding:16px;">
+      <div style="font-size:13px;font-weight:700;color:var(--orange);font-family:'Barlow Condensed',sans-serif;letter-spacing:.08em;margin-bottom:10px;">⚠ RESOURCE CONSTRAINT</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7">
+        Saddar receives no rescue teams. G-10 water main burst requires field verification before rescue team can be released.<br><br>
+        <strong style="color:var(--orange)">Impact:</strong> 15,000 Saddar residents covered only by medical outreach.<br>
+        <strong style="color:var(--orange)">Mitigation:</strong> Punjab Emergency Services mutual aid request submitted — ETA 45 minutes.
       </div>
-      <div class="alert-txt">Saddar mein extreme heatwave — 47°C. Cooling centers khule hain.</div>
-      <div class="alert-txt">Extreme Heatwave Saddar RWP: Community Hall, RGH Lobby open.</div>
-      <div class="lang-row"><span class="badge b-orange">🇵🇰 Urdu</span><span class="badge b-blue">🇬🇧 English</span></div>
+    </div>
+    <div style="background:rgba(0,200,83,.04);border:1px solid rgba(0,200,83,.3);border-radius:7px;padding:16px;">
+      <div style="font-size:13px;font-weight:700;color:var(--green);font-family:'Barlow Condensed',sans-serif;letter-spacing:.08em;margin-bottom:10px;">✓ MUTUAL AID REQUESTED</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7">
+        <strong style="color:var(--green)">Punjab Emergency Services:</strong> 2 additional rescue teams requested.<br>
+        <strong style="color:var(--green)">Status:</strong> Request confirmed — ETA 45 minutes to Saddar.<br><br>
+        <strong style="color:var(--green)">Traffic rerouting:</strong><br>
+        Congestion G-10: 9.2/10 → <span style="color:var(--orange)">Alternate: Kashmir Hwy</span><br>
+        Safe route: Ibn-e-Sina Rd via F-10, Margalla Rd
+      </div>
     </div>
   </div>
 
-  <!-- PANEL 2: STAKEHOLDER COMMS -->
-  <div class="panel">
-    <div class="panel-hdr">📨 Stakeholder Messages <span class="badge b-green">5 Sent</span></div>
+</div>
 
-    <div class="sk-row" style="animation-delay:0.12s">
-      <div class="sk-left"><span class="sk-icon">🏥</span><div><div class="sk-name">PIMS Hospital</div><div class="sk-msg">Prepare for G-10 casualties</div></div></div>
-      <div class="sk-sent">SENT ✓</div>
-    </div>
-    <div class="sk-row" style="animation-delay:0.27s">
-      <div class="sk-left"><span class="sk-icon">🚔</span><div><div class="sk-name">Islamabad Police</div><div class="sk-msg">Block G-10 roads</div></div></div>
-      <div class="sk-sent">SENT ✓</div>
-    </div>
-    <div class="sk-row" style="animation-delay:0.42s">
-      <div class="sk-left"><span class="sk-icon">🚒</span><div><div class="sk-name">Rescue 1122</div><div class="sk-msg">Stand down flood rescue</div></div></div>
-      <div class="sk-sent">SENT ✓</div>
-    </div>
-    <div class="sk-row" style="animation-delay:0.57s">
-      <div class="sk-left"><span class="sk-icon">💧</span><div><div class="sk-name">WASA Authority</div><div class="sk-msg">Investigate Street 12 G-10</div></div></div>
-      <div class="sk-sent">SENT ✓</div>
-    </div>
-    <div class="sk-row" style="animation-delay:0.72s">
-      <div class="sk-left"><span class="sk-icon">📡</span><div><div class="sk-name">Command Center</div><div class="sk-msg">Situation summary sent</div></div></div>
-      <div class="sk-sent">SENT ✓</div>
-    </div>
-  </div>
+<!-- ══════════════════════════ PAGE 5: ALERTS & COMMS ══════════════════════════ -->
+<div class="page" id="p5">
 
-  <!-- PANEL 3: CIRO AI ASSISTANT -->
-  <div class="panel" style="padding-bottom:0;display:flex;flex-direction:column;">
-    <div class="panel-hdr">🤖 CIRO AI <span class="badge b-orange">POWERED BY GEMINI</span></div>
+  <div class="grid2" style="align-items:start">
 
-    <div class="chat-wrap">
-      <div class="chat-msgs" id="chatMsgs">
-        <div class="chat-msg">
-          <div class="chat-av">🛡</div>
-          <div class="chat-bub">Assalam o Alaikum Commander. I am monitoring <strong>2 active crises</strong>. G-10 water emergency and Saddar heatwave are both active. How can I assist you?</div>
+    <div>
+      <div class="sec"><div class="pd"></div>📢 Public Alerts — 3 Issued</div>
+
+      <div class="alert-card ac-r">
+        <div class="ach r">🔴 RETRACTED ALERT — AI CORRECTED <span class="badge b-g" style="font-size:9px">AI VERIFIED</span></div>
+        <div class="strike">URGENT: Urban Flooding Emergency — G-10 Islamabad. Evacuate immediately.</div>
+        <div class="au">✓ CORRECTED: Water Main Burst — Street 12, G-10</div>
+        <div class="at" style="color:var(--green);font-size:11px">Pani ka pressure pipe se tha, flooding nahi. WASA team roshan ki gayi. Rescue 1122 flood response se stand down.</div>
+        <div class="am">✓ WASA notified &nbsp;•&nbsp; Rescue 1122 stood down &nbsp;•&nbsp; Public alerted &nbsp;|&nbsp; 14:45 PKT</div>
+      </div>
+
+      <div class="alert-card ac-o">
+        <div class="ach o">⚠ G-10 ADVISORY — WATER MAIN BURST <span class="badge b-a">PRELIMINARY</span></div>
+        <div class="at">🇵🇰 <em>G-10 mein paani ka pipe phat gaya hai. Ghari Street 12 se door rahein. WASA team pahunch rahi hai. Ghabrahein nahi — flooding nahi hai.</em></div>
+        <div class="at">🇬🇧 Water main burst on Street 12, G-10. Avoid the area. WASA team en route. No flooding — infrastructure failure only.</div>
+        <div class="lang-row"><span class="badge b-o">🇵🇰 Urdu</span><span class="badge b-b">🇬🇧 English</span></div>
+      </div>
+
+      <div class="alert-card ac-o">
+        <div class="ach o">🌡 HEATWAVE EMERGENCY — SADDAR
+          <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--orange);font-family:'Inter',sans-serif">
+            <span style="width:6px;height:6px;background:var(--orange);border-radius:50%;animation:pulse 1.5s ease-in-out infinite;display:inline-block"></span>ACTIVE
+          </span>
+        </div>
+        <div class="at">🇵🇰 <em>Saddar Rawalpindi mein shadeed garmi — 47 degree. Bahar niklna avoid karein. Paani piyein. Cooling centers khule hain: Saddar Community Hall, RGH Lobby, Liaquat Bagh.</em></div>
+        <div class="at">🇬🇧 Extreme heatwave alert — Saddar, RWP. Temperature 47°C. Stay indoors. Cooling centers: Saddar Community Hall, RGH Lobby, Liaquat Bagh Park.</div>
+        <div class="lang-row"><span class="badge b-o">🇵🇰 Urdu</span><span class="badge b-b">🇬🇧 English</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="ph">🚗 Traffic Rerouting Impact</div>
+        <div class="traffic-box">
+          <div class="traffic-row">
+            <div class="traffic-label">G-10 Congestion (Before)</div>
+            <div class="traffic-bar"><div class="traffic-fill" style="width:92%;background:var(--red)"></div></div>
+            <div class="traffic-val" style="color:var(--red)">9.2</div>
+          </div>
+          <div class="traffic-row">
+            <div class="traffic-label">G-10 Congestion (After)</div>
+            <div class="traffic-bar"><div class="traffic-fill" style="width:41%;background:var(--green)"></div></div>
+            <div class="traffic-val" style="color:var(--green)">4.1</div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.7">
+            <strong style="color:var(--orange)">Alternate routes:</strong> Kashmir Hwy via G-9 &nbsp;|&nbsp; Ibn-e-Sina Rd via F-10 &nbsp;|&nbsp; Margalla Road<br>
+            <strong style="color:var(--red)">Avoid:</strong> Street 12 G-10 Markaz, Saddar Chowk (heat advisory)
+          </div>
         </div>
       </div>
+    </div>
 
-      <div class="chips">
-        <div class="chip" onclick="sendChip('G-10 status?')">G-10 status?</div>
-        <div class="chip" onclick="sendChip('Saddar update?')">Saddar update?</div>
-        <div class="chip" onclick="sendChip('Kitne resources?')">Kitne resources?</div>
-        <div class="chip" onclick="sendChip('Safe routes?')">Safe routes?</div>
-        <div class="chip" onclick="sendChip('G-10 mein kya hua?')">G-10 mein kya hua?</div>
-      </div>
-
-      <div class="chat-input-row">
-        <input class="chat-input" id="chatInput" type="text" placeholder="Ask CIRO AI..." onkeydown="onChatKey(event)" />
-        <button class="chat-send" onclick="doSend()">➤</button>
+    <div>
+      <div class="sec"><div class="pd"></div>📨 Stakeholder Messages — 5 Sent</div>
+      <div class="panel">
+        <div class="sk-row">
+          <div class="sk-l"><span class="sk-icon">🏥</span><div><div class="sk-name">PIMS Hospital — Islamabad</div><div class="sk-msg">Prepare 12 beds for potential G-10 casualties. Water pressure injuries possible. Heatstroke cases incoming from Saddar — prepare IV fluids and cooling protocol. ETA 25 minutes.</div></div></div>
+          <div class="sk-sent">SENT ✓</div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-l"><span class="sk-icon">🚔</span><div><div class="sk-name">Islamabad Police — G-10 Unit</div><div class="sk-msg">Deploy 3 units to G-10 Markaz. Block Street 12 entry points immediately. Redirect traffic to Kashmir Highway. Water main burst — not flooding. Coordinate with WASA on arrival.</div></div></div>
+          <div class="sk-sent">SENT ✓</div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-l"><span class="sk-icon">🚒</span><div><div class="sk-name">Rescue 1122 — Islamabad</div><div class="sk-msg">STAND DOWN flood rescue operation G-10. Field verification confirms water main burst, not flooding. Flood rescue no longer required. Maintain readiness for reassignment pending WASA site confirmation.</div></div></div>
+          <div class="sk-sent">SENT ✓</div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-l"><span class="sk-icon">💧</span><div><div class="sk-name">WASA Authority — Islamabad</div><div class="sk-msg">URGENT: Investigate water main at Street 12, G-10. Field report confirms burst — pressure failure. Dispatch repair team immediately. Coordinate with 3 police units on site. Update CIRO every 15 minutes.</div></div></div>
+          <div class="sk-sent">SENT ✓</div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-l"><span class="sk-icon">📡</span><div><div class="sk-name">CIRO Command Center — HQ</div><div class="sk-msg">Situation report: 2 active crises. G-10 water main burst — WASA + 3 police deployed, 2 tankers en route. Saddar heatwave — 2 ambulances + med outreach deploying. Pipeline execution: 1.2s. All 5 agents operational. Awaiting WASA field confirmation.</div></div></div>
+          <div class="sk-sent">SENT ✓</div>
+        </div>
       </div>
     </div>
+
   </div>
+</div>
 
-</div><!-- end bottom-panels -->
+<!-- ══════════════════════════ PAGE 6: AI CHAT ══════════════════════════ -->
+<div class="page" id="p6" style="padding-bottom:0">
+  <div class="chat-page">
+    <div class="chat-body" id="chatBody">
+      <div class="chat-msg">
+        <div class="cav">🛡</div>
+        <div class="cbub">
+          <strong>Assalam o Alaikum, Commander.</strong><br>
+          Main CIRO AI hoon — Crisis Intelligence &amp; Response Orchestrator. Abhi <strong style="color:var(--orange)">2 active crises</strong> monitor ho rahi hain:<br><br>
+          ⚡ <strong>G-10 Islamabad</strong> — Water main burst (severity 8/10)<br>
+          🌡 <strong>Saddar Rawalpindi</strong> — Extreme heatwave 47°C (severity 7/10)<br><br>
+          Main Urdu aur English dono mein jawab de sakta hoon. Kya poochna chahte hain, Commander?
+        </div>
+      </div>
+    </div>
 
-</main>
+    <div class="chips-row">
+      <div class="chip" onclick="sendChip('G-10 status?')">G-10 status?</div>
+      <div class="chip" onclick="sendChip('Saddar update?')">Saddar update?</div>
+      <div class="chip" onclick="sendChip('Kitne resources deploy hain?')">Kitne resources?</div>
+      <div class="chip" onclick="sendChip('Safe route kaunsa hai?')">Safe routes?</div>
+      <div class="chip" onclick="sendChip('G-10 mein kya hua exactly?')">G-10 mein kya hua?</div>
+      <div class="chip" onclick="sendChip('Pipeline status?')">Pipeline status?</div>
+      <div class="chip" onclick="sendChip('False alarm ka kya hua?')">Retraction kya tha?</div>
+    </div>
 
-<!-- ============================================================ FOOTER -->
+    <div class="chat-input-row">
+      <input class="cinput" id="cinput" type="text" placeholder="Ask CIRO AI in Urdu or English..." onkeydown="onKey(event)"/>
+      <button class="csend" onclick="doSend()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ FOOTER ══════════════════════════ -->
 <footer>
-  <span>Powered by Google Antigravity + Gemini AI</span>
+  <span>Powered by Google Antigravity + Gemini AI &nbsp;|&nbsp; 5 Agents Active</span>
   <span>CIRO © 2026 | Built for #AISeekho 2026</span>
-  <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub Project →</a>
+  <a href="https://github.com" target="_blank" rel="noopener">GitHub Project →</a>
 </footer>
 
-</div><!-- end container -->
-
 <script>
-// ====== PARTICLES ======
+/* ── PARTICLES ── */
 (function(){
-  const c = document.getElementById('particles');
-  for(let i=0;i<32;i++){
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.style.cssText = `left:${Math.random()*100}%;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;animation-duration:${14+Math.random()*18}s;animation-delay:${-Math.random()*22}s`;
+  const c=document.getElementById('particles');
+  for(let i=0;i<28;i++){
+    const p=document.createElement('div');p.className='pt';
+    p.style.cssText=`left:${Math.random()*100}%;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;animation-duration:${14+Math.random()*18}s;animation-delay:${-Math.random()*22}s`;
     c.appendChild(p);
   }
 })();
 
-// ====== CLOCK ======
+/* ── CLOCK ── */
 function tick(){
-  const d = new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Karachi'}));
-  const pad = n=>String(n).padStart(2,'0');
-  const ts  = pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
-  document.getElementById('clock').textContent = ts;
-  const wt = document.getElementById('wtime');
-  if(wt) wt.textContent = pad(d.getHours())+':'+pad(d.getMinutes())+' PKT';
+  const d=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Karachi'}));
+  const p=n=>String(n).padStart(2,'0');
+  const t=p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+  document.getElementById('clock').textContent=t;
+  const wt=document.getElementById('wtime2');if(wt)wt.textContent=p(d.getHours())+':'+p(d.getMinutes())+' PKT';
 }
-tick();
-setInterval(tick,1000);
+tick();setInterval(tick,1000);
 
-// ====== COUNT-UP ======
+/* ── PAGE ROUTING ── */
+function goPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(el)el.classList.add('active');
+  else{const t=document.querySelector(`[data-page="${id}"]`);if(t)t.classList.add('active');}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goPageByName(id){
+  const el=document.querySelector(`[data-page="${id}"]`);
+  goPage(id,el);
+}
+
+/* ── COUNT-UP ── */
 function countUp(el,target,suffix,dur){
-  dur=dur||2000; suffix=suffix||'';
-  const s=Date.now();
+  dur=dur||2000;suffix=suffix||'';const s=Date.now();
   (function go(){
-    const t=Math.min((Date.now()-s)/dur,1);
-    const e=1-Math.pow(1-t,3);
-    const v=Math.floor(e*target);
+    const t=Math.min((Date.now()-s)/dur,1),e=1-Math.pow(1-t,3),v=Math.floor(e*target);
     el.textContent=(target>=1000?v.toLocaleString():v)+suffix;
-    if(t<1) requestAnimationFrame(go);
+    if(t<1)requestAnimationFrame(go);
     else el.textContent=(target>=1000?target.toLocaleString():target)+suffix;
   })();
 }
 
 window.addEventListener('load',function(){
-  document.querySelectorAll('.metric-value[data-target]').forEach(function(el){
-    setTimeout(()=>countUp(el,+el.dataset.target,el.dataset.suffix||''),200);
-  });
-  // trigger opacity animations
-  document.querySelectorAll('.metric-card').forEach(function(el){
-    const d=parseFloat(el.style.animationDelay||'0');
-    setTimeout(()=>{ el.style.animation='none'; el.style.opacity='1'; },d*1000+300);
-  });
-  document.querySelectorAll('.signal-card').forEach(function(el){
-    const d=parseFloat(el.style.animationDelay||'0');
-    setTimeout(()=>{ el.style.opacity='1'; },d*1000+200);
-  });
-  document.querySelectorAll('.alert-card').forEach(function(el){
-    const d=parseFloat(el.style.animationDelay||'0');
-    setTimeout(()=>{ el.style.opacity='1'; },d*1000+500);
-  });
-  document.querySelectorAll('.sk-row').forEach(function(el){
-    const d=parseFloat(el.style.animationDelay||'0');
-    setTimeout(()=>{ el.style.opacity='1'; },d*1000+700);
+  document.querySelectorAll('.mv[data-target]').forEach(function(el){
+    setTimeout(()=>countUp(el,+el.dataset.target,el.dataset.suffix||''),150);
   });
 });
 
-// ====== PIPELINE ======
-const LOGS = [
-  {t:'> Initializing CIRO Pipeline...',                              cls:'muted'},
-  {t:'[SignalFusionAgent] Loading signal data...',                   a:0},
-  {t:'[SignalFusionAgent] Fetching live weather from OpenWeatherMap...',a:0},
-  {t:'[SignalFusionAgent] CONFLICT DETECTED: G-10 flooding vs water main',a:0},
-  {t:'[SignalFusionAgent] Credibility: Field Report 90%, Twitter 70%',a:0},
-  {t:'[SignalFusionAgent] ✓ Complete — confidence: 60%',             a:0,cls:'green',done:0},
-  {t:'[CrisisClassifierAgent] Classifying G-10: urban_flooding | water_main_burst',a:1},
-  {t:'[CrisisClassifierAgent] Saddar: heatwave confirmed — 47°C',   a:1},
-  {t:'[CrisisClassifierAgent] ✓ Complete — 2 crises classified',    a:1,cls:'green',done:1},
-  {t:'[ResourceAllocatorAgent] Allocating 9 resources across 2 crises...',a:2},
-  {t:'[ResourceAllocatorAgent] TRADEOFF: Saddar gets no rescue teams',a:2},
-  {t:'[ResourceAllocatorAgent] ✓ Complete — all resources assigned', a:2,cls:'green',done:2},
-  {t:'[ResponseCoordinatorAgent] Generating public alerts (Urdu + English)...',a:3},
-  {t:'[ResponseCoordinatorAgent] Notifying 5 stakeholders...',      a:3},
-  {t:'[ResponseCoordinatorAgent] RETRACT: flood alert → water main burst',a:3},
-  {t:'[ResponseCoordinatorAgent] ✓ Complete',                       a:3,cls:'green',done:3},
-  {t:'[CiroAssistantAgent] Updating knowledge base...',              a:4},
-  {t:'[CiroAssistantAgent] AI assistant primed with live data',      a:4},
-  {t:'[CiroAssistantAgent] ✓ Complete',                              a:4,cls:'green',done:4},
-  {t:'✅ PIPELINE COMPLETE — 4 agents executed in 1.2s',             cls:'green',final:true}
+/* ── PIPELINE ── */
+const PIPE_LOGS=[
+  {t:'> Initializing CIRO Multi-Agent Pipeline v2.1...',cls:'t-m'},
+  {t:'[SignalFusionAgent] Ingesting 4 signals...',a:0},
+  {t:'[SignalFusionAgent] Scoring credibility: Twitter 70%, Facebook 65%, Field 90%, API 100%',a:0},
+  {t:'[SignalFusionAgent] ⚡ CONFLICT: Social media reports flooding — Field report says water main burst',a:0},
+  {t:'[SignalFusionAgent] Resolving: Field + API outweigh social (90%+100% vs 65%+70%)',a:0},
+  {t:'[SignalFusionAgent] ✓ COMPLETE — confidence: 60% | G-10: water_main_burst | Saddar: heatwave_47c',a:0,cls:'t-g',done:0},
+  {t:'[CrisisClassifierAgent] Classifying G-10: urban_flooding (low) + water_main_burst (high)',a:1},
+  {t:'[CrisisClassifierAgent] Classifying Saddar: heatwave confirmed — 47°C > 45°C threshold',a:1},
+  {t:'[CrisisClassifierAgent] Severity assigned: G-10=8/10, Saddar=7/10',a:1},
+  {t:'[CrisisClassifierAgent] ✓ COMPLETE — 2 crises classified | confidence: 72%',a:1,cls:'t-g',done:1},
+  {t:'[ResourceAllocatorAgent] Loading 9 resources across 5 types...',a:2},
+  {t:'[ResourceAllocatorAgent] Running constraint optimization...',a:2},
+  {t:'[ResourceAllocatorAgent] ⚠ TRADEOFF: Saddar gets no rescue teams — G-10 verify priority',a:2},
+  {t:'[ResourceAllocatorAgent] ✓ COMPLETE — 8/9 resources deployed | 1 rescue team standby',a:2,cls:'t-g',done:2},
+  {t:'[ResponseCoordinatorAgent] Generating bilingual alerts (Urdu + English)...',a:3},
+  {t:'[ResponseCoordinatorAgent] 🔴 RETRACT: flood_g10 alert — replace with water_main_burst advisory',a:3},
+  {t:'[ResponseCoordinatorAgent] Notifying 5 stakeholders: PIMS, Police, Rescue1122, WASA, Command',a:3},
+  {t:'[ResponseCoordinatorAgent] ✓ COMPLETE — 4 alerts issued | 5 stakeholders notified',a:3,cls:'t-g',done:3},
+  {t:'[CiroAssistantAgent] Loading knowledge base from pipeline output...',a:4},
+  {t:'[CiroAssistantAgent] Bilingual Q&A ready — Urdu + English interface active',a:4},
+  {t:'[CiroAssistantAgent] ✓ COMPLETE — awaiting commander queries',a:4,cls:'t-g',done:4},
+  {t:'✅ PIPELINE COMPLETE — 5 agents | 4 alerts | 9 resources | executed in 1.2s',cls:'t-g',final:true}
 ];
 
-let pRunning=false;
-let curAgent=-1;
+let pRun=false,curA=-1;
 
 function runPipeline(e){
-  if(pRunning) return;
-  pRunning=true;
-  curAgent=-1;
+  if(pRun)return;pRun=true;curA=-1;
+  const btn=document.getElementById('pipeBtn');
 
   // ripple
-  const btn=document.getElementById('pipelineBtn');
-  const r=btn.getBoundingClientRect();
-  const rip=document.createElement('span');
-  rip.className='ripple-circle';
-  const sz=Math.max(r.width,r.height);
+  const r=btn.getBoundingClientRect(),rip=document.createElement('span');
+  rip.className='ripple-c';const sz=Math.max(r.width,r.height);
   rip.style.cssText=`width:${sz}px;height:${sz}px;left:${e.clientX-r.left-sz/2}px;top:${e.clientY-r.top-sz/2}px`;
-  btn.appendChild(rip);
-  setTimeout(()=>rip.remove(),700);
+  btn.appendChild(rip);setTimeout(()=>rip.remove(),700);
 
-  btn.textContent='⟳ PIPELINE RUNNING...';
+  btn.textContent='⟳ EXECUTING PIPELINE...';
   btn.style.background='linear-gradient(135deg,#cc5500,#FF6B00)';
 
-  const term=document.getElementById('termCursor');
-  document.getElementById('terminal').innerHTML='<span class="t-cursor" id="termCursor"></span>';
+  const term=document.getElementById('terminal');
+  term.innerHTML='<span class="t-cur" id="tCur"></span>';
 
   for(let i=0;i<5;i++){
-    const row=document.getElementById('ag'+i);
-    row.classList.remove('active','done-row');
-    document.getElementById('ai'+i).className='agent-ind';
-    document.getElementById('as'+i).textContent='STANDBY';
-    if(i<4) document.getElementById('ac'+i).classList.remove('active');
+    document.getElementById('ac'+i).className='agent-card';
+    const pill=document.getElementById('as'+i);
+    pill.className='badge b-m';pill.textContent='STANDBY';
   }
 
   function step(idx){
-    if(idx>=LOGS.length){
-      const btn=document.getElementById('pipelineBtn');
-      btn.textContent='✅ PIPELINE COMPLETE';
+    if(idx>=PIPE_LOGS.length){
+      btn.textContent='✅ PIPELINE COMPLETE — VIEW RESULTS';
       btn.style.background='linear-gradient(135deg,#00C853,#009a40)';
-      setTimeout(()=>{
-        btn.textContent='▶ INITIALIZE CIRO PIPELINE';
-        btn.style.background='linear-gradient(135deg,#FF6B00,#FF8C00)';
-        pRunning=false;
-      },3200);
+      setTimeout(()=>{btn.textContent='▶ RUN ALL AGENTS — EXECUTE CIRO PIPELINE';btn.style.background='linear-gradient(135deg,#FF6B00,#FF8C00)';pRun=false;},3500);
       return;
     }
-    const entry=LOGS[idx];
+    const en=PIPE_LOGS[idx];
 
-    if(entry.a!==undefined && entry.a!==curAgent){
-      curAgent=entry.a;
-      document.getElementById('ag'+entry.a).classList.add('active');
-      document.getElementById('ai'+entry.a).className='agent-ind processing';
-      document.getElementById('as'+entry.a).textContent='PROCESSING';
-      if(entry.a>0) document.getElementById('ac'+(entry.a-1)).classList.add('active');
+    if(en.a!==undefined&&en.a!==curA){
+      if(curA>=0&&en.done===undefined){/* keep previous active */}
+      curA=en.a;
+      const card=document.getElementById('ac'+en.a);
+      card.classList.add('running');
+      const pill=document.getElementById('as'+en.a);
+      pill.className='badge b-o';pill.textContent='PROCESSING';
     }
 
-    if(entry.done!==undefined){
-      const row=document.getElementById('ag'+entry.done);
-      row.classList.remove('active'); row.classList.add('done-row');
-      document.getElementById('ai'+entry.done).className='agent-ind done';
-      document.getElementById('as'+entry.done).textContent='COMPLETE ✓';
+    if(en.done!==undefined){
+      const card=document.getElementById('ac'+en.done);
+      card.classList.remove('running');card.classList.add('done');
+      const pill=document.getElementById('as'+en.done);
+      pill.className='badge b-g';pill.textContent='COMPLETE ✓';
+      card.scrollIntoView({behavior:'smooth',block:'nearest'});
     }
 
     const term=document.getElementById('terminal');
-    const cursor=document.getElementById('termCursor');
-    if(cursor) cursor.remove();
+    const cur=document.getElementById('tCur');if(cur)cur.remove();
     const line=document.createElement('span');
-    line.className='t-line'+(entry.cls?' '+entry.cls:'');
-    line.textContent=entry.t+'\n';
+    line.className=en.cls||'t-o';line.textContent=en.t+'\n';
     term.appendChild(line);
-    const nc=document.createElement('span');
-    nc.className='t-cursor'; nc.id='termCursor';
-    term.appendChild(nc);
-    term.scrollTop=term.scrollHeight;
+    const nc=document.createElement('span');nc.className='t-cur';nc.id='tCur';
+    term.appendChild(nc);term.scrollTop=term.scrollHeight;
 
-    const delay=entry.final?400:entry.done!==undefined?550:260;
+    const delay=en.final?400:en.done!==undefined?600:260;
     setTimeout(()=>step(idx+1),delay);
   }
   setTimeout(()=>step(0),200);
 }
 
-// ====== CHAT ======
-const RESPONSES={
+/* ── CHAT ── */
+const RESP={
   'g-10|g10|pani|water|flood':
-    'G-10 Islamabad mein water main burst confirm hua hai. WASA team dispatch ho gayi hai. 3 police units area ko block kar rahi hain. Congestion 9.2/10 — Kashmir Highway use karein. Field verification complete — flooding ka scenario rule out.',
+    'G-10 Islamabad mein water main burst confirm hua hai. WASA team Street 12 par pahunch gayi hai. 3 police units area block kar rahi hain. Flooding nahi hai — pipe infrastructure failure hai. Congestion 9.2/10 se 4.1/10 ho gayi Kashmir Highway divert karne ke baad. G-10 se bahar rehein jab tak WASA repair na ho jaye.',
   'heat|garmi|saddar|47|heatwave':
-    'Saddar Rawalpindi mein extreme heatwave 47°C hai. 2 ambulances aur 1 medical outreach team active hain. Cooling centers open hain: Saddar Community Hall, RGH Lobby. Bahar na niklen, paani piyein.',
-  'resource|kitne|deployed|tanker':
-    '9 resources deployed: G-10 mein 3 police units, 2 water tankers, 1 rescue team. Saddar mein 2 ambulances, 1 medical outreach. 1 rescue team HQ standby — pending G-10 field verification.',
-  'avoid|safe|route|rasta|highway':
-    'Avoid: G-10 Markaz (water main burst), Saddar Rawalpindi (extreme heat). Safe routes: Kashmir Highway via G-9, Ibn-e-Sina Road via F-10, Margalla Road.',
-  'retract|retraction|false|alarm':
-    'G-10 ka flood alert retract hua — field verification ne water main burst confirm kiya. Public alert update ho gayi. WASA ko investigate karne bheja. Rescue 1122 flood response se stand down.',
-  'status|update|situation|brief':
-    'CIRO status: 2 active crises. G-10 water main burst severity 8/10 — WASA on site. Saddar heatwave severity 7/10 — medical teams active. Pipeline last run: 1.2s. All 5 agents operational.'
+    'Saddar Rawalpindi mein extreme heatwave active hai — temperature 47°C hai jo danger threshold 45°C se upar hai. 2 ambulances en route hain aur 1 medical outreach team deploy ho rahi hai. Cooling centers open: Saddar Community Hall, RGH Lobby, Liaquat Bagh Park. Bahar bilkul nahi jayen, paani piyein, electric fan use karein.',
+  'resource|kitne|deploy|tanker|ambulan':
+    '9 resources deployed hain: G-10 mein — 3 police units (deployed), 2 water tankers (en route 15 min). Saddar mein — 2 ambulances (en route 25 min), 1 medical outreach (deploying 22 min). 1 rescue team HQ standby — G-10 field verification complete hone ka intezar hai. Total: 8/9 active.',
+  'avoid|safe|route|rasta|highway|traffic':
+    'Avoid karein: Street 12 G-10 Markaz (water main burst), Saddar Chowk area (extreme heat 47°C). Safe routes: Kashmir Highway via G-9 sector | Ibn-e-Sina Road via F-10 | Margalla Road (Islamabad). Saddar ke liye: Murree Road alternative available. Congestion G-10 ab 4.1/10 reh gayi hai diversions se.',
+  'retract|retraction|false|alarm|galat':
+    'G-10 ka flood alert retract hua — yeh galti thi. Social media ne flooding report ki thi (65-70% credibility) lekin field verification ne confirm kiya: water main burst hai, flooding nahi (90% credibility + weather API 100%). Alert update ho gayi, WASA dispatch ho gayi, Rescue 1122 flood response se stand down. CIRO ne AI se automatically correct kiya.',
+  'pipeline|agent|status|brief|update':
+    'CIRO pipeline status: 5 agents sab COMPLETE. SignalFusionAgent: conflict resolve kiya (60% conf). CrisisClassifierAgent: 2 crises classify kiye (72% conf). ResourceAllocatorAgent: 9 resources allocate kiye. ResponseCoordinatorAgent: 4 alerts issue kiye, 5 stakeholders notify kiye. CiroAssistantAgent: active. Last execution: 1.2 seconds.',
+  'saddar|cooling|center|hospital':
+    'Saddar heatwave update: Temperature 47°C. Medical resources: 2 ambulances en route (ETA 25 min), 1 medical outreach deploying (ETA 22 min). No rescue team available — constraint hai (G-10 priority). Punjab Emergency mutual aid request bheji gayi — ETA 45 min. Cooling centers: Saddar Community Hall, RGH Lobby, Liaquat Bagh Park — sab open hain.',
 };
 
 function getReply(q){
   const l=q.toLowerCase();
-  for(const p in RESPONSES){
-    if(p.split('|').some(k=>l.includes(k))) return RESPONSES[p];
-  }
-  return 'CIRO monitoring Islamabad aur Rawalpindi. 2 active crises under control. G-10 water emergency aur Saddar heatwave. Koi specific sawaal poochein — main help karunga, Commander.';
+  for(const p in RESP){if(p.split('|').some(k=>l.includes(k)))return RESP[p];}
+  return 'CIRO monitoring Islamabad aur Rawalpindi. Abhi 2 active crises hain: G-10 water main burst (severity 8/10) aur Saddar extreme heatwave 47°C (severity 7/10). 8/9 resources deploy hain. Koi specific sawaal poochein — G-10 status, Saddar update, safe routes, resources, ya pipeline ke baare mein. Main help karunga, Commander.';
 }
 
 function addMsg(text,isUser){
-  const box=document.getElementById('chatMsgs');
-  const wrap=document.createElement('div');
-  wrap.className='chat-msg'+(isUser?' user-msg':'');
-  const av=document.createElement('div');
-  av.className=isUser?'user-av':'chat-av';
-  av.textContent=isUser?'👤':'🛡';
-  const bub=document.createElement('div');
-  bub.className='chat-bub'+(isUser?' user':'');
-  bub.textContent=text;
-  wrap.appendChild(av); wrap.appendChild(bub);
-  box.appendChild(wrap);
-  box.scrollTop=box.scrollHeight;
+  const box=document.getElementById('chatBody');
+  const wrap=document.createElement('div');wrap.className='chat-msg'+(isUser?' u':'');
+  const av=document.createElement('div');av.className=isUser?'uav':'cav';av.textContent=isUser?'👤':'🛡';
+  const bub=document.createElement('div');bub.className='cbub'+(isUser?' u':'');
+  bub.innerHTML=text;
+  wrap.appendChild(av);wrap.appendChild(bub);box.appendChild(wrap);box.scrollTop=box.scrollHeight;
 }
 
 function showTyping(){
-  const box=document.getElementById('chatMsgs');
-  const wrap=document.createElement('div');
-  wrap.className='chat-msg'; wrap.id='typingWrap';
-  const av=document.createElement('div'); av.className='chat-av'; av.textContent='🛡';
-  const bub=document.createElement('div'); bub.className='chat-bub';
-  bub.innerHTML='<div class="typing-dots"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>';
-  wrap.appendChild(av); wrap.appendChild(bub);
-  box.appendChild(wrap);
-  box.scrollTop=box.scrollHeight;
+  const box=document.getElementById('chatBody');
+  const wrap=document.createElement('div');wrap.className='chat-msg';wrap.id='typWrap';
+  const av=document.createElement('div');av.className='cav';av.textContent='🛡';
+  const bub=document.createElement('div');bub.className='cbub';
+  bub.innerHTML='<div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div>';
+  wrap.appendChild(av);wrap.appendChild(bub);box.appendChild(wrap);box.scrollTop=box.scrollHeight;
 }
 
-function hideTyping(){
-  const t=document.getElementById('typingWrap');
-  if(t) t.remove();
-}
+function hideTyping(){const t=document.getElementById('typWrap');if(t)t.remove();}
 
 function sendMsg(text){
-  if(!text.trim()) return;
-  addMsg(text,true);
-  showTyping();
-  setTimeout(()=>{ hideTyping(); addMsg(getReply(text),false); },1000+Math.random()*700);
+  if(!text.trim())return;
+  addMsg(text,true);showTyping();
+  setTimeout(()=>{hideTyping();addMsg(getReply(text),false);},900+Math.random()*700);
 }
 
-function doSend(){
-  const inp=document.getElementById('chatInput');
-  const v=inp.value.trim();
-  if(!v) return;
-  inp.value='';
-  sendMsg(v);
-}
-
-function sendChip(t){ sendMsg(t); }
-
-function onChatKey(e){ if(e.key==='Enter') doSend(); }
+function doSend(){const i=document.getElementById('cinput');const v=i.value.trim();if(!v)return;i.value='';sendMsg(v);}
+function sendChip(t){sendMsg(t);}
+function onKey(e){if(e.key==='Enter')doSend();}
 </script>
 </body>
 </html>
