@@ -1,4 +1,6 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../constants.dart';
 
@@ -8,13 +10,29 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  late final AnimationController _animController;
+  
   bool _isTyping = false;
+  bool _showError = false;
+  String? _lastUserMessage;
 
   late final GenerativeModel _model;
   late final ChatSession _chat;
+
+  // MOCK DATA
+  final List<Map<String, dynamic>> _messages = [];
+
+  final List<String> _suggestedQuestions = [
+    'What is G-10 status?',
+    'G-10 mein kya ho raha hai?',
+    'Kitne resources deploy hain?',
+    'Which areas to avoid?',
+    'Saddar heatwave update?',
+    'False alarm kya tha?',
+  ];
 
   @override
   void initState() {
@@ -29,67 +47,51 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       systemInstruction: Content.system('''
 You are CIRO - Crisis Intelligence & Response Orchestrator.
-You are an AI assistant for emergency commanders in Pakistan.
+AI assistant for emergency commanders in Pakistan.
 
-CURRENT ACTIVE CRISES:
-1. G-10 Islamabad - Water Emergency (flooding vs water main burst - under investigation)
-   Severity: 8/10 | Population at risk: 5,000
-   Status: Field verification pending
-   Resources: 3 police units, 2 water tankers, 1 rescue team deployed
-   
-2. Saddar Rawalpindi - Extreme Heatwave 47C
-   Severity: 7/10 | Population at risk: 15,000  
-   Status: Response active
-   Resources: 2 ambulances, 1 medical outreach team deployed
+LIVE CRISIS CONTEXT:
+- G-10 Islamabad: Water emergency (flooding vs water main 
+  burst under investigation). Severity 8/10. 5,000 at risk.
+  Resources: 3 police, 2 water tankers, 1 rescue team.
+- Saddar Rawalpindi: Extreme Heatwave 47C. Severity 7/10. 
+  15,000 at risk. Resources: 2 ambulances, 1 medical team.
+- Total deployed: 9 resources across 2 crises.
+- RETRACTION: Flood alert retracted - water main confirmed.
+  WASA notified. Rescue 1122 stood down.
 
-TOTAL RESOURCES: 9 deployed, 1 rescue team on standby
-
-RECENT ACTION: Flood alert for G-10 RETRACTED - confirmed water main burst
-WASA notified. Rescue 1122 stood down from flood response.
-
-TRAFFIC: G-10 congestion severe (9.2/10). 
-Alternate routes: Kashmir Highway via G-9, Ibn-e-Sina Road via F-10
-
-STAKEHOLDERS NOTIFIED: PIMS Hospital, Islamabad Police, 
-Rescue 1122, WASA Water Authority, Media/Command Center
-
-YOUR PERSONALITY:
-- You are calm, authoritative, professional
-- You speak like a military AI assistant
-- You respond in the SAME language the user writes in
-- If Urdu → respond in Urdu
-- If Roman Urdu → respond in Roman Urdu  
-- If English → respond in English
-- Keep responses concise but complete
-- Always end with a actionable recommendation
-- You care about saving lives
+PERSONALITY:
+- Calm, authoritative, military AI assistant
+- Respond in SAME language user writes in
+- Urdu → Urdu, Roman Urdu → Roman Urdu, English → English
+- Concise but complete answers
+- Always end with actionable recommendation
+- You save lives - take that seriously
 '''),
     );
     _chat = _model.startChat();
+
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
   }
 
-  // MOCK DATA
-  final List<Map<String, dynamic>> _messages = [
-    {
-      'role': 'ciro',
-      'text': 'Assalam o Alaikum Commander. I am monitoring 2 active crises. How can I assist you?',
-      'time': '10:21 AM',
-    },
-  ];
-
-  final List<String> _suggestedQuestions = [
-    'Kitne resources deploy hain?',
-    'Heatwave update?',
-    'G-10 status?',
-    'Which areas safe?',
-    'Saddar situation?',
-  ];
+  @override
+  void dispose() {
+    _animController.dispose();
+    _controller.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   // Send message function:
   Future<void> _sendMessage(String userMessage) async {
     if (userMessage.trim().isEmpty) return;
 
+    _lastUserMessage = userMessage;
+
     setState(() {
+      _showError = false;
       _messages.add({
         'role': 'user',
         'text': userMessage,
@@ -101,28 +103,49 @@ YOUR PERSONALITY:
     _scrollToBottom();
     
     try {
-      final response = await _chat.sendMessage(
+      final responseStream = _chat.sendMessageStream(
         Content.text(userMessage)
       );
       
-      setState(() {
-        _isTyping = false;
-        _messages.add({
-          'role': 'ciro',
-          'text': response.text ?? 'Unable to process',
-          'time': TimeOfDay.now().format(context),
+      bool isFirstChunk = true;
+      int? streamMessageIndex;
+      
+      await for (final chunk in responseStream) {
+        final chunkText = chunk.text ?? '';
+        if (chunkText.isNotEmpty) {
+          if (isFirstChunk) {
+            setState(() {
+              _isTyping = false;
+              _messages.add({
+                'role': 'ciro',
+                'text': chunkText,
+                'time': TimeOfDay.now().format(context),
+                'isStreaming': true,
+              });
+              streamMessageIndex = _messages.length - 1;
+              isFirstChunk = false;
+            });
+          } else {
+            setState(() {
+              if (streamMessageIndex != null) {
+                _messages[streamMessageIndex!]['text'] = 
+                    (_messages[streamMessageIndex!]['text'] as String) + chunkText;
+              }
+            });
+          }
+          _scrollToBottom();
+        }
+      }
+      
+      if (streamMessageIndex != null) {
+        setState(() {
+          _messages[streamMessageIndex!]['isStreaming'] = false;
         });
-      });
-      _scrollToBottom();
+      }
     } catch (e) {
-      // Keyword fallback
       setState(() {
         _isTyping = false;
-        _messages.add({
-          'role': 'ciro', 
-          'text': _getKeywordResponse(userMessage),
-          'time': TimeOfDay.now().format(context),
-        });
+        _showError = true;
       });
       _scrollToBottom();
     }
@@ -173,19 +196,26 @@ YOUR PERSONALITY:
                   // Watermark
                   Center(
                     child: Icon(Icons.nightlight_round,
-                      color: Colors.white.withOpacity(0.02), size: 200),
+                      color: Colors.white.withOpacity(0.015), size: 200),
                   ),
-                  ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                    itemCount: _messages.length,
-                    itemBuilder: (context, i) => _buildChatBubble(_messages[i]),
-                  ),
+                  _messages.isEmpty
+                      ? _buildEmptyState()
+                      : ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          itemCount: _messages.length + (_showError ? 1 : 0),
+                          itemBuilder: (context, i) {
+                            if (i < _messages.length) {
+                              return _buildChatBubble(_messages[i]);
+                            } else {
+                              return _buildErrorState();
+                            }
+                          },
+                        ),
                 ],
               ),
             ),
             if (_isTyping) _buildTypingIndicator(),
-            _buildSuggestedQuestions(),
             _buildInputBar(),
             _buildFooter(),
           ],
@@ -267,100 +297,221 @@ YOUR PERSONALITY:
     );
   }
 
+  Widget _buildEmptyState() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 30),
+          // Glowing avatar container
+          Container(
+            width: 90, height: 90,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [kPrimaryBlue.withOpacity(0.4), kCardBgLighter],
+                begin: Alignment.topLeft, end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: kPrimaryBlue.withOpacity(0.2),
+                  blurRadius: 20, spreadRadius: 2,
+                ),
+              ],
+              border: Border.all(color: kPrimaryBlue.withOpacity(0.6), width: 1.5),
+            ),
+            child: const Icon(Icons.smart_toy, color: kPrimaryBlue, size: 40),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Assalam o Alaikum Commander',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Main 2 active crises monitor kar raha hun. Emergency response queries ke liye tayyar.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 14,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 40),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 4, bottom: 12),
+              child: Row(
+                children: [
+                  Icon(Icons.auto_awesome, color: kPrimaryBlue.withOpacity(0.8), size: 16),
+                  const SizedBox(width: 8),
+                  Text(
+                    'SUGGESTED PROMPTS',
+                    style: TextStyle(
+                      color: kPrimaryBlue.withOpacity(0.8),
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Wrap(
+            spacing: 8,
+            runSpacing: 10,
+            children: _suggestedQuestions.map((q) => GestureDetector(
+              onTap: () => _sendMessage(q),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: kCardBg,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: kBorderSubtle.withOpacity(0.8)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.chat_bubble_outline, color: kPrimaryBlue, size: 14),
+                    const SizedBox(width: 8),
+                    Text(
+                      q,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildChatBubble(Map<String, dynamic> msg) {
     final isUser = msg['role'] == 'user';
     final text = msg['text'] ?? '';
     final time = msg['time'] ?? '';
-    if (isUser) {
-      return Align(
-        alignment: Alignment.centerRight,
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 12, left: 60),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF0284C7), kPrimaryBlue],
-            ),
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16), topRight: Radius.circular(16),
-              bottomLeft: Radius.circular(16), bottomRight: Radius.circular(4),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(text, style: const TextStyle(
-                color: Colors.white, fontSize: 14, height: 1.4,
-              )),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(time, style: TextStyle(
-                    color: Colors.white.withOpacity(0.6), fontSize: 10,
-                  )),
-                  const SizedBox(width: 4),
-                  Icon(Icons.done_all, color: Colors.white.withOpacity(0.7), size: 14),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+    final isStreaming = msg['isStreaming'] == true;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            width: 32, height: 32,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: kCardBg,
-              border: Border.all(color: kPrimaryBlue.withOpacity(0.3)),
-            ),
-            child: const Icon(Icons.smart_toy, color: kPrimaryBlue, size: 16),
+    return GestureDetector(
+      onLongPress: () {
+        Clipboard.setData(ClipboardData(text: text));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Message copied to clipboard', style: TextStyle(color: Colors.white)),
+            backgroundColor: kCardBgLighter,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            duration: const Duration(seconds: 1),
           ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('CIRO AI', style: TextStyle(
-                  color: kPrimaryBlue, fontSize: 11, fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                )),
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: kCardBg,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(4), topRight: Radius.circular(16),
-                      bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16),
-                    ),
-                    border: Border.all(color: kBorderSubtle.withOpacity(0.5)),
+        );
+      },
+      child: isUser
+          ? Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 12, left: 60),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF0284C7), kPrimaryBlue],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(text, style: const TextStyle(
-                        color: Colors.white, fontSize: 14, height: 1.5,
-                      )),
-                      const SizedBox(height: 4),
-                      Text(time, style: TextStyle(
-                        color: Colors.grey.shade600, fontSize: 10,
-                      )),
-                    ],
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16), topRight: Radius.circular(16),
+                    bottomLeft: Radius.circular(16), bottomRight: Radius.circular(4),
                   ),
                 ),
-              ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(text, style: const TextStyle(
+                      color: Colors.white, fontSize: 14, height: 1.4,
+                    )),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(time, style: TextStyle(
+                          color: Colors.white.withOpacity(0.6), fontSize: 10,
+                        )),
+                        const SizedBox(width: 4),
+                        Icon(Icons.done_all, color: Colors.white.withOpacity(0.7), size: 14),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    width: 32, height: 32,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: kCardBg,
+                      border: Border.all(color: kPrimaryBlue.withOpacity(0.3)),
+                    ),
+                    child: const Icon(Icons.smart_toy, color: kPrimaryBlue, size: 16),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('CIRO AI', style: TextStyle(
+                          color: kPrimaryBlue, fontSize: 11, fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        )),
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: kCardBg,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(4), topRight: Radius.circular(16),
+                              bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16),
+                            ),
+                            border: Border.all(color: kBorderSubtle.withOpacity(0.5)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                text + (isStreaming ? ' █' : ''),
+                                style: const TextStyle(
+                                  color: Colors.white, fontSize: 14, height: 1.5,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(time, style: TextStyle(
+                                color: Colors.grey.shade600, fontSize: 10,
+                              )),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -404,62 +555,121 @@ YOUR PERSONALITY:
   }
 
   Widget _dot(int index) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.3, end: 1.0),
-      duration: Duration(milliseconds: 600 + index * 200),
-      builder: (_, v, __) => Container(
-        width: 7, height: 7,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: kPrimaryBlue.withOpacity(v),
-        ),
-      ),
+    return AnimatedBuilder(
+      animation: _animController,
+      builder: (context, child) {
+        final double delay = index * 0.2;
+        double value = _animController.value - delay;
+        if (value < 0) value += 1.0;
+        final double opacity = 0.3 + 0.7 * (0.5 + 0.5 * math.sin(value * 2 * math.pi));
+        
+        return Container(
+          width: 7, height: 7,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: kPrimaryBlue.withOpacity(opacity),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildSuggestedQuestions() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+  Widget _buildErrorState() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.help_outline, color: kPrimaryBlue.withOpacity(0.7), size: 14),
-              const SizedBox(width: 6),
-              Text('SUGGESTED QUESTIONS', style: TextStyle(
-                color: kPrimaryBlue.withOpacity(0.7), fontSize: 10,
-                fontWeight: FontWeight.w700, letterSpacing: 0.5,
-              )),
-            ],
-          ),
-          const SizedBox(height: 6),
-          SizedBox(
-            height: 34,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: _suggestedQuestions.map((q) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: GestureDetector(
-                  onTap: () async {
-                    _controller.text = q;
-                    await Future.delayed(const Duration(milliseconds: 200));
-                    _sendMessage(q);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(17),
-                      border: Border.all(color: kPrimaryBlue.withOpacity(0.3)),
-                      color: kPrimaryBlue.withOpacity(0.08),
+              Container(
+                width: 32, height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: kCardBg,
+                  border: Border.all(color: kCriticalRed.withOpacity(0.3)),
+                ),
+                child: const Icon(Icons.error_outline, color: kCriticalRed, size: 16),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: kCardBg,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(4), topRight: Radius.circular(16),
+                      bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16),
                     ),
-                    child: Text(q, style: TextStyle(
-                      color: Colors.grey.shade300, fontSize: 12,
-                    )),
+                    border: Border.all(color: kCriticalRed.withOpacity(0.5)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Connection issue. Retry karein.',
+                        style: TextStyle(color: Colors.white, fontSize: 14, height: 1.5),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              if (_lastUserMessage != null) {
+                                setState(() {
+                                  _showError = false;
+                                });
+                                _sendMessage(_lastUserMessage!);
+                              }
+                            },
+                            icon: const Icon(Icons.refresh, size: 14, color: Colors.white),
+                            label: const Text('Retry', style: TextStyle(fontSize: 12, color: Colors.white)),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kPrimaryBlue,
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          OutlinedButton.icon(
+                            onPressed: () {
+                              if (_lastUserMessage != null) {
+                                final fallbackText = _getKeywordResponse(_lastUserMessage!);
+                                setState(() {
+                                  _showError = false;
+                                  _messages.add({
+                                    'role': 'ciro',
+                                    'text': fallbackText,
+                                    'time': TimeOfDay.now().format(context),
+                                  });
+                                });
+                                _scrollToBottom();
+                              }
+                            },
+                            icon: const Icon(Icons.offline_bolt, size: 14, color: kWarningOrange),
+                            label: const Text('Offline Fallback', style: TextStyle(fontSize: 12, color: kWarningOrange)),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: kWarningOrange),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              )).toList(),
-            ),
+              ),
+            ],
           ),
         ],
       ),
