@@ -6,7 +6,7 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 // ═══════════════════════════════════════════════════════════════
 
 class CiroApiService {
-  static const String geminiApiKey = 'AIzaSyAWt1MOPc_gIAQj3lUgGr0rwj5JYGdEkSg';
+  static const String geminiApiKey = 'AIzaSyAZRb7QquhGPF8_W1Csvh3xFnVhdNFE7xo';
 
   static final _model = GenerativeModel(
     model: 'gemini-1.5-flash',

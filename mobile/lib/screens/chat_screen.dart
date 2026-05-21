@@ -40,7 +40,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
     // MOCK DATA
     _model = GenerativeModel(
       model: 'gemini-1.5-flash',
-      apiKey: 'AIzaSyAWt1MOPc_gIAQj3lUgGr0rwj5JYGdEkSg',
+      apiKey: 'AIzaSyAZRb7QquhGPF8_W1Csvh3xFnVhdNFE7xo',
       generationConfig: GenerationConfig(
         temperature: 0.9,
         maxOutputTokens: 1024,
